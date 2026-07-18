@@ -84,7 +84,7 @@ export default function Welcome({ products }) {
                     {/* STUDIO HERO TITLE */}
                     <div className="mb-8 sm:mb-12 border-b border-slate-200/60 pb-6 sm:pb-8 text-center flex flex-col items-center justify-center">
                         <span className="text-[10px] sm:text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2.5 py-1 rounded-md">Édition 2026</span>
-                        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3">Lunettes & Montures d'Optique</h1>
+                        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-3">AYMANE ELKHAIR</h1>
                         <p className="text-xs sm:text-sm text-slate-500 mt-2 max-w-xl mx-auto px-2">
                             Compositions minimalistes, matériaux de haute précision et confort visuel certifié par nos spécialistes.
                         </p>
