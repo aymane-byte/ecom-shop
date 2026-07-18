@@ -3,19 +3,19 @@ import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
 const statusOptions = [
-    { value: 'en_attente', label: 'En attente' },
-    { value: 'pay\u00e9', label: 'Payee' },
-    { value: 'exp\u00e9di\u00e9', label: 'Expediee' },
-    { value: 'livr\u00e9', label: 'Livree' },
-    { value: 'annul\u00e9', label: 'Annulee' },
+    { value: 'en_attente', label: 'En attente de traitement' },
+    { value: 'pay\u00e9', label: 'Payée' },
+    { value: 'exp\u00e9di\u00e9', label: 'Expédiée' },
+    { value: 'livr\u00e9', label: 'Livrée' },
+    { value: 'annul\u00e9', label: 'Annulée' },
 ];
 
 const tabs = [
-    { id: 'all', label: 'Toutes' },
-    { id: 'en_attente', label: 'En attente' },
-    { id: 'pay\u00e9', label: 'Payees' },
-    { id: 'exp\u00e9di\u00e9', label: 'Expediees' },
-    { id: 'livr\u00e9', label: 'Livrees' },
+    { id: 'all', label: 'Toutes les commandes' },
+    { id: 'en_attente', label: 'En attente de traitement' },
+    { id: 'pay\u00e9', label: 'Commandes payées' },
+    { id: 'exp\u00e9di\u00e9', label: 'Commandes expédiées' },
+    { id: 'livr\u00e9', label: 'Commandes livrées' },
 ];
 
 function money(value) {
@@ -51,11 +51,11 @@ function StatusBadge({ status }) {
     };
 
     const labels = {
-        en_attente: 'En attente',
-        'pay\u00e9': 'Payee',
-        'exp\u00e9di\u00e9': 'Expediee',
-        'livr\u00e9': 'Livree',
-        'annul\u00e9': 'Annulee',
+        en_attente: 'En attente de traitement',
+        'pay\u00e9': 'Payée',
+        'exp\u00e9di\u00e9': 'Expédiée',
+        'livr\u00e9': 'Livrée',
+        'annul\u00e9': 'Annulée',
     };
 
     return (
@@ -73,7 +73,7 @@ function PaymentBadge({ status }) {
         <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none ${
             isPaid ? 'bg-green-100 text-green-900' : 'bg-slate-100 text-slate-700'
         }`}>
-            {isPaid ? 'Payee' : 'En attente'}
+            {isPaid ? 'Paiement effectué' : 'Paiement en attente'}
         </span>
     );
 }
@@ -86,7 +86,7 @@ function FulfillmentBadge({ status }) {
         <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none ${
             fulfilled ? 'bg-blue-100 text-blue-900' : 'bg-yellow-100 text-yellow-900'
         }`}>
-            {fulfilled ? 'Traitee' : 'Non traitee'}
+            {fulfilled ? 'Traitée' : 'Non traitée'}
         </span>
     );
 }
@@ -181,17 +181,17 @@ export default function Orders({ orders, filters }) {
 
     return (
         <AdminLayout>
-            <Head title="Commandes - Admin" />
+            <Head title="Tableau de Bord Admin - Gestion des Commandes" />
 
             <div className="space-y-5">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div>
                         <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-500">
-                            <Link href="/admin" className="hover:text-slate-900">Admin</Link>
+                            <Link href="/admin" className="hover:text-slate-900">Tableau de Bord</Link>
                             <span>/</span>
-                            <span className="text-slate-900">Commandes</span>
+                            <span className="text-slate-900">Gestion des Commandes</span>
                         </div>
-                        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Commandes</h1>
+                        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Vue d'ensemble des Commandes</h1>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
@@ -200,7 +200,7 @@ export default function Orders({ orders, filters }) {
                             onClick={printAllPending}
                             className="rounded-lg bg-orange-600 px-3 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-orange-700"
                         >
-                            Imprimer Tout
+                            Imprimer toutes les étiquettes d'expédition
                         </button>
                         <button
                             type="button"
@@ -208,7 +208,7 @@ export default function Orders({ orders, filters }) {
                             disabled={selectedIds.length === 0}
                             className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                            Marquer imprimee
+                            Marquer comme imprimé
                         </button>
                         <button
                             type="button"
@@ -216,7 +216,7 @@ export default function Orders({ orders, filters }) {
                             disabled={selectedIds.length === 0}
                             className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                            Etiquettes ({selectedIds.length})
+                            Générer les étiquettes ({selectedIds.length})
                         </button>
                         <button
                             type="button"
@@ -224,22 +224,22 @@ export default function Orders({ orders, filters }) {
                             disabled={selectedIds.length === 0}
                             className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                            Factures
+                            Générer les factures
                         </button>
                     </div>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-3">
                     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Commandes</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Total Commandes</p>
                         <p className="mt-2 text-2xl font-semibold text-slate-950">{orders.total || rows.length}</p>
                     </div>
                     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Total page</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Total Chiffre d'affaires</p>
                         <p className="mt-2 text-2xl font-semibold text-slate-950">{money(summary.total)}</p>
                     </div>
                     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">A traiter</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Commandes à Traiter</p>
                         <p className="mt-2 text-2xl font-semibold text-slate-950">{summary.pending}</p>
                     </div>
                 </div>
@@ -268,7 +268,7 @@ export default function Orders({ orders, filters }) {
                                 <div className="relative min-w-0 flex-1">
                                     <input
                                         type="text"
-                                        placeholder="Rechercher par commande, client ou telephone"
+                                        placeholder="Rechercher par N° commande, client ou téléphone"
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
                                         className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -279,7 +279,7 @@ export default function Orders({ orders, filters }) {
                                         type="submit"
                                         className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
                                     >
-                                        Rechercher
+                                        Rechercher les commandes
                                     </button>
                                     {search && (
                                         <button
@@ -287,7 +287,7 @@ export default function Orders({ orders, filters }) {
                                             onClick={clearSearch}
                                             className="rounded-lg px-3 py-2 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
                                         >
-                                            Effacer
+                                            Effacer la recherche
                                         </button>
                                     )}
                                 </div>
@@ -295,15 +295,15 @@ export default function Orders({ orders, filters }) {
 
                             {selectedIds.length > 0 && (
                                 <div className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                                    <span className="text-xs font-semibold text-slate-700">{selectedIds.length} selectionnee(s)</span>
+                                    <span className="text-xs font-semibold text-slate-700">{selectedIds.length} commande(s) sélectionnée(s)</span>
                                     <button type="button" onClick={() => handleBulkStatus('exp\u00e9di\u00e9')} className="rounded-md bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50">
-                                        Expedier
+                                        Marquer comme expédiée
                                     </button>
                                     <button type="button" onClick={() => handleBulkStatus('livr\u00e9')} className="rounded-md bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50">
-                                        Livrer
+                                        Marquer comme livrée
                                     </button>
                                     <button type="button" onClick={() => setSelectedIds([])} className="rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-500 hover:bg-white hover:text-slate-900">
-                                        Annuler
+                                        Annuler la sélection
                                     </button>
                                 </div>
                             )}
@@ -322,15 +322,15 @@ export default function Orders({ orders, filters }) {
                                             className="rounded border-slate-300 text-slate-950 focus:ring-slate-950"
                                         />
                                     </th>
-                                    <th className="px-4 py-3">Commande</th>
-                                    <th className="px-4 py-3">Date</th>
-                                    <th className="px-4 py-3">Client</th>
-                                    <th className="px-4 py-3">Paiement</th>
-                                    <th className="px-4 py-3">Traitement</th>
-                                    <th className="px-4 py-3">Articles</th>
-                                    <th className="px-4 py-3 text-right">Total</th>
-                                    <th className="px-4 py-3">Statut</th>
-                                    <th className="px-4 py-3 text-right">Actions</th>
+                                    <th className="px-4 py-3">N° Commande</th>
+                                    <th className="px-4 py-3">Date de commande</th>
+                                    <th className="px-4 py-3">Nom du client</th>
+                                    <th className="px-4 py-3">Statut du paiement</th>
+                                    <th className="px-4 py-3">Statut de la livraison</th>
+                                    <th className="px-4 py-3">Nb. Articles</th>
+                                    <th className="px-4 py-3 text-right">Montant total</th>
+                                    <th className="px-4 py-3">Statut de la commande</th>
+                                    <th className="px-4 py-3 text-right">Actions rapides</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
@@ -348,7 +348,7 @@ export default function Orders({ orders, filters }) {
                                             <td className="px-4 py-4 align-middle">
                                                 <div className="font-semibold text-slate-950">#{order.id}</div>
                                                 <div className="mt-1 text-[11px] text-slate-500">
-                                                    {order.is_printed ? 'Imprimee' : 'Non imprimee'}
+                                                    {order.is_printed ? 'Étiquette imprimée' : 'Étiquette non imprimée'}
                                                 </div>
                                             </td>
                                             <td className="px-4 py-4 align-middle text-slate-600">{order.created_at}</td>
@@ -384,14 +384,14 @@ export default function Orders({ orders, filters }) {
                                                         onClick={() => openLabel(order.id)}
                                                         className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
                                                     >
-                                                        Colis
+                                                        Voir l'étiquette
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={() => openInvoice(order.id)}
                                                         className="rounded-lg bg-slate-950 px-2.5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800"
                                                     >
-                                                        Facture
+                                                        Voir la facture
                                                     </button>
                                                 </div>
                                             </td>
@@ -401,8 +401,8 @@ export default function Orders({ orders, filters }) {
                                     <tr>
                                         <td colSpan="10" className="px-4 py-16 text-center">
                                             <div className="mx-auto max-w-sm">
-                                                <h3 className="text-sm font-semibold text-slate-950">Aucune commande trouvee</h3>
-                                                <p className="mt-1 text-sm text-slate-500">Essayez un autre statut ou une autre recherche.</p>
+                                                <h3 className="text-sm font-semibold text-slate-950">Aucune commande correspondante trouvée</h3>
+                                                <p className="mt-1 text-sm text-slate-500">Ajustez les filtres ou votre recherche pour trouver des commandes.</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -434,7 +434,7 @@ export default function Orders({ orders, filters }) {
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-lg font-semibold text-slate-950">{money(order.total_price)}</p>
-                                                <p className="mt-1 text-[10px] text-slate-500">{order.is_printed ? 'Imprimee' : 'Non imprimee'}</p>
+                                                <p className="mt-1 text-[10px] text-slate-500">{order.is_printed ? 'Étiquette imprimée' : 'Étiquette non imprimée'}</p>
                                             </div>
                                         </div>
 
@@ -460,14 +460,14 @@ export default function Orders({ orders, filters }) {
                                                     onClick={() => openLabel(order.id)}
                                                     className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
                                                 >
-                                                    Colis
+                                                    Voir l'étiquette
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => openInvoice(order.id)}
                                                     className="flex-1 rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800"
                                                 >
-                                                    Facture
+                                                    Voir la facture
                                                 </button>
                                             </div>
                                         </div>
@@ -475,8 +475,8 @@ export default function Orders({ orders, filters }) {
                                 ))
                             ) : (
                                 <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-                                    <h3 className="text-sm font-semibold text-slate-950">Aucune commande trouvee</h3>
-                                    <p className="mt-1 text-sm text-slate-500">Essayez un autre statut ou une autre recherche.</p>
+                                    <h3 className="text-sm font-semibold text-slate-950">Aucune commande correspondante trouvée</h3>
+                                    <p className="mt-1 text-sm text-slate-500">Ajustez les filtres ou votre recherche pour trouver des commandes.</p>
                                 </div>
                             )}
                         </div>
@@ -485,7 +485,7 @@ export default function Orders({ orders, filters }) {
                     {orders.links && orders.links.length > 3 && (
                         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-4 py-3">
                             <p className="text-xs font-medium text-slate-500">
-                                Page {orders.current_page || 1} sur {orders.last_page || 1}
+                                Page {orders.current_page || 1} sur {orders.last_page || 1} pages
                             </p>
                             <div className="flex flex-wrap items-center gap-1">
                                 {orders.links.map((link, index) => (

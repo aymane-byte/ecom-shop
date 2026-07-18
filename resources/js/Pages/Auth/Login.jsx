@@ -14,7 +14,7 @@ export default function Login() {
 
     return (
         <div className="bg-[#f8f9fa] min-h-screen flex items-center justify-center p-4 sm:p-6 antialiased font-sans">
-            <Head title="Connexion - monocle." />
+            <Head title="Connexion à votre compte - monocle." />
 
             {/* 📱 RESPONSIVE WIDTH & PADDING FOR LOGIN CONTAINER */}
             <div className="w-full max-w-md bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs">
@@ -25,20 +25,20 @@ export default function Login() {
                         <span className="bg-slate-900 text-white p-1.5 rounded-lg text-xs shadow-2xs">👓</span>
                         <span>monocle<span className="text-blue-600 font-black">.</span></span>
                     </Link>
-                    <p className="text-[11px] sm:text-xs text-slate-400 mt-2 font-medium px-2">Authentification requise pour accéder à votre espace.</p>
+                    <p className="text-[11px] sm:text-xs text-slate-400 mt-2 font-medium px-2">Connectez-vous pour accéder à votre espace personnel et suivre vos commandes en toute simplicité.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
 
                     {/* Adresse Email */}
                     <div>
-                        <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Adresse Email</label>
+                        <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Adresse e-mail</label>
                         <input
                             type="email"
                             value={data.email}
                             onChange={e => setData('email', e.target.value)}
                             className="w-full mt-1.5 border border-slate-200 bg-[#fbfbfc] p-3 rounded-xl outline-none text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-slate-400 focus:bg-white transition"
-                            placeholder="nom@exemple.com"
+                            placeholder="Saisissez votre adresse e-mail"
                         />
                         {errors.email && <p className="text-rose-500 text-xs mt-1.5 font-medium">⚠️ {errors.email}</p>}
                     </div>
@@ -53,7 +53,7 @@ export default function Login() {
                             value={data.password}
                             onChange={e => setData('password', e.target.value)}
                             className="w-full mt-1.5 border border-slate-200 bg-[#fbfbfc] p-3 rounded-xl outline-none text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-slate-400 focus:bg-white transition"
-                            placeholder="••••••••"
+                            placeholder="Entrez votre mot de passe"
                         />
                         {errors.password && <p className="text-rose-500 text-xs mt-1.5 font-medium">⚠️ {errors.password}</p>}
                     </div>
@@ -71,7 +71,7 @@ export default function Login() {
                 {/* Footer Switch Link */}
                 <div className="text-center mt-6 pt-4 border-t border-slate-100">
                     <Link href="/register" className="text-xs text-slate-400 hover:text-blue-600 font-semibold transition block">
-                        Pas encore de compte ? <span className="underline text-slate-600 hover:text-blue-600">S'inscrire</span>
+                        Pas encore de compte ? <span className="underline text-slate-600 hover:text-blue-600">Créer un compte</span>
                     </Link>
                 </div>
             </div>

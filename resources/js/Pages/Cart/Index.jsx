@@ -56,7 +56,7 @@ export default function Index() {
         e.preventDefault();
 
         if (!formData.customer_name || !formData.customer_email || !formData.customer_phone || !formData.customer_city || !formData.customer_address) {
-            alert('Veuillez remplir tous les champs obligatoires.');
+            alert('Veuillez compléter tous les champs obligatoires pour finaliser votre commande.');
             return;
         }
 
@@ -65,7 +65,7 @@ export default function Index() {
 
     return (
         <div className="bg-[#f8f9fa] min-h-screen text-slate-900 antialiased font-sans">
-            <Head title="Votre Panier — monocle." />
+            <Head title="Votre panier — monocle." />
 
             <nav className="bg-white/90 backdrop-blur-md border-b border-slate-200/60 px-4 sm:px-8 py-4 flex justify-between items-center sticky top-0 z-50">
                 <Link href="/" className="text-base sm:text-lg font-bold tracking-tight text-slate-900 flex items-center gap-1.5">
@@ -73,26 +73,26 @@ export default function Index() {
                     <span>monocle<span className="text-blue-600 font-black">.</span></span>
                 </Link>
                 <Link href="/" className="text-[10px] sm:text-xs font-bold text-slate-500 hover:text-slate-900 transition">
-                    ← <span className="hidden sm:inline">Retourner à la</span> boutique
+                    ← Poursuivre mes achats
                 </Link>
             </nav>
 
             <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
                 {flash?.error && (
                     <div className="mb-6 bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-xs font-semibold">
-                        ⚠️ {flash.error}
+                        ⚠️ Une erreur est survenue : {flash.error}. Veuillez réessayer.
                     </div>
                 )}
 
                 <div className="mb-6 sm:mb-8 border-b border-slate-200/60 pb-4 sm:pb-5">
-                    <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">Votre Panier d'Achat</h1>
-                    <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">Finalisez votre commande en renseignant vos coordonnées de livraison ci-dessous.</p>
+                    <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">Votre panier</h1>
+                    <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">Finalisez votre commande en toute simplicité. Paiement sécurisé à la livraison.</p>
                 </div>
 
                 {cartItems.length === 0 ? (
                     <div className="bg-white p-8 sm:p-12 rounded-2xl border border-slate-200/60 text-center shadow-xs">
-                        <p className="text-slate-400 text-xs font-medium mb-4">Votre panier est vide.</p>
-                        <Link href="/" className="bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition inline-block">Découvrir nos montures</Link>
+                        <p className="text-slate-400 text-xs font-medium mb-4">Votre panier est actuellement vide.</p>
+                        <Link href="/" className="bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition inline-block">Découvrir nos produits</Link>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-start">
@@ -105,7 +105,7 @@ export default function Index() {
                                             {item.image ? (
                                                 <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply" />
                                             ) : (
-                                                <span className="text-[8px] text-slate-300 font-bold uppercase">👓</span>
+                                                <span className="text-[8px] text-slate-300 font-bold uppercase">Image produit</span>
                                             )}
                                         </div>
                                         <div className="min-w-0 flex-1">
@@ -121,7 +121,7 @@ export default function Index() {
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <span className="font-extrabold text-slate-900 text-xs w-16 text-right">{(Number(item.price) * item.quantity).toFixed(2)} DH</span>
-                                            <button type="button" onClick={() => handleRemove(id)} className="text-slate-300 hover:text-rose-600 text-xs font-bold p-2">✕</button>
+                                            <button type="button" onClick={() => handleRemove(id)} className="text-slate-300 hover:text-rose-600 text-xs font-bold p-2">Retirer</button>
                                         </div>
                                     </div>
                                 </div>
@@ -130,27 +130,27 @@ export default function Index() {
 
                         <form onSubmit={handleCheckout} className="md:col-span-5 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/60 shadow-xs space-y-5">
                             <div>
-                                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-1">Livraison & Coordonnées</h2>
-                                <p className="text-[11px] text-slate-400">Expédition partout au Maroc avec paiement à la livraison.</p>
+                                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-1">Vos informations de livraison</h2>
+                                <p className="text-[11px] text-slate-400">Bénéficiez d'une livraison rapide partout au Maroc avec paiement à la réception.</p>
                             </div>
 
                             <div className="space-y-3.5">
                                 <div>
-                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Nom complet</label>
-                                    <input type="text" required placeholder="Votre nom" className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs font-medium focus:outline-none focus:border-slate-950 transition" value={formData.customer_name} onChange={e => setFormData({...formData, customer_name: e.target.value})} />
+                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Nom et prénom</label>
+                                    <input type="text" required placeholder="Entrez votre nom et prénom" className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs font-medium focus:outline-none focus:border-slate-950 transition" value={formData.customer_name} onChange={e => setFormData({...formData, customer_name: e.target.value})} />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Email</label>
-                                    <input type="email" required placeholder="votre@email.com" className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs font-medium focus:outline-none focus:border-slate-950 transition" value={formData.customer_email} onChange={e => setFormData({...formData, customer_email: e.target.value})} disabled={!!auth.user} />
+                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Adresse e-mail</label>
+                                    <input type="email" required placeholder="Votre adresse e-mail" className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs font-medium focus:outline-none focus:border-slate-950 transition" value={formData.customer_email} onChange={e => setFormData({...formData, customer_email: e.target.value})} disabled={!!auth.user} />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Téléphone</label>
-                                    <input type="tel" required placeholder="06 00 00 00 00" className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs font-medium focus:outline-none focus:border-slate-950 transition" value={formData.customer_phone} onChange={e => setFormData({...formData, customer_phone: e.target.value})} />
+                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Numéro de téléphone</label>
+                                    <input type="tel" required placeholder="Votre numéro de téléphone" className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs font-medium focus:outline-none focus:border-slate-950 transition" value={formData.customer_phone} onChange={e => setFormData({...formData, customer_phone: e.target.value})} />
                                 </div>
 
                                 {/* 🏙️ NOUVEAU SELECT VILLE */}
                                 <div>
-                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Ville</label>
+                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Ville de livraison</label>
                                     <select
                                         required
                                         className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs font-medium focus:outline-none focus:border-slate-950 transition cursor-pointer appearance-none"
@@ -165,17 +165,17 @@ export default function Index() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Adresse de Livraison</label>
-                                    <textarea required rows="2" placeholder="Quartier, N° Appartement, Rue..." className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs font-medium focus:outline-none focus:border-slate-950 transition resize-none" value={formData.customer_address} onChange={e => setFormData({...formData, customer_address: e.target.value})} />
+                                    <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Adresse complète de livraison</label>
+                                    <textarea required rows="2" placeholder="Votre adresse complète (rue, quartier, numéro de maison/appartement)" className="w-full bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs font-medium focus:outline-none focus:border-slate-950 transition resize-none" value={formData.customer_address} onChange={e => setFormData({...formData, customer_address: e.target.value})} />
                                 </div>
                             </div>
 
                             <div className="border-t border-slate-100 pt-4">
                                 <div className="flex justify-between mb-4 items-baseline">
-                                    <span className="text-slate-500 text-xs font-medium">Total TTC</span>
+                                    <span className="text-slate-500 text-xs font-medium">Montant total à payer</span>
                             <span className="text-xl font-extrabold text-slate-900 tracking-tight">{totalPrice.toFixed(2)} DH</span>
                                 </div>
-                                <button type="submit" className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3.5 rounded-xl shadow-xs transition cursor-pointer">Commander maintenant</button>
+                                <button type="submit" className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3.5 rounded-xl shadow-xs transition cursor-pointer">Confirmer ma commande</button>
                             </div>
                         </form>
                     </div>

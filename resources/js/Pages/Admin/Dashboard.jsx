@@ -28,9 +28,9 @@ function StatusBadge({ status }) {
     };
     const labels = {
         en_attente: 'En attente',
-        'pay\u00e9': 'Payee',
-        'exp\u00e9di\u00e9': 'Expediee',
-        'livr\u00e9': 'Livree',
+        'pay\u00e9': 'Payée',
+        'exp\u00e9di\u00e9': 'Expédiée',
+        'livr\u00e9': 'Livrée',
     };
 
     return (
@@ -52,28 +52,28 @@ export default function Dashboard({ stats }) {
     ];
 
     const cards = [
-        { label: "Chiffre d'affaires", value: money(stats.chiffre_affaires), detail: 'Commandes payees et traitees' },
-        { label: 'Commandes', value: stats.total_orders, detail: 'Total commandes' },
-        { label: 'Clients', value: stats.total_clients, detail: 'Comptes inscrits' },
-        { label: 'Stock bas', value: stats.out_of_stock, detail: 'Produits en rupture', danger: stats.out_of_stock > 0 },
+        { label: "Chiffre d'affaires total", value: money(stats.chiffre_affaires), detail: 'Total des commandes payées et traitées' },
+        { label: 'Nombre total de commandes', value: stats.total_orders, detail: 'Toutes catégories confondues' },
+        { label: 'Clients inscrits', value: stats.total_clients, detail: 'Nombre total de clients enregistrés' },
+        { label: 'Produits en stock faible', value: stats.out_of_stock, detail: 'Articles nécessitant un réapprovisionnement', danger: stats.out_of_stock > 0 },
     ];
 
     return (
         <AdminLayout>
-            <Head title="Dashboard - Admin" />
+            <Head title="Tableau de bord administrateur - monocle." />
 
             <div className="space-y-6">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                        <p className="text-sm font-medium text-slate-500">Vue generale</p>
-                        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Dashboard</h1>
+                        <p className="text-sm font-medium text-slate-500">Aperçu général</p>
+                        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Tableau de bord administrateur</h1>
                     </div>
                     <div className="flex flex-wrap gap-2">
                         <Link href="/admin/products/create" className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
-                            Nouveau produit
+                            Ajouter un nouveau produit
                         </Link>
                         <Link href="/admin/orders" className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800">
-                            Voir commandes
+                            Gérer les commandes
                         </Link>
                     </div>
                 </div>
@@ -91,10 +91,10 @@ export default function Dashboard({ stats }) {
                 <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex flex-col gap-2 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h2 className="text-base font-semibold text-slate-950">Performance commerciale</h2>
-                            <p className="mt-1 text-sm text-slate-500">Estimation des ventes sur les derniers mois.</p>
+                            <h2 className="text-base font-semibold text-slate-950">Performance des ventes</h2>
+                            <p className="mt-1 text-sm text-slate-500">Évolution du chiffre d'affaires sur les six derniers mois.</p>
                         </div>
-                        <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">6 mois</span>
+                        <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">Période : 6 mois</span>
                     </div>
                     <div className="h-72 min-w-0 p-4">
                         <ResponsiveContainer width="100%" height="100%">
@@ -118,8 +118,8 @@ export default function Dashboard({ stats }) {
                 <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-12">
                     <section className="rounded-xl border border-slate-200 bg-white shadow-sm sm:col-span-2 xl:col-span-5">
                         <div className="flex items-center justify-between border-b border-slate-200 p-4">
-                            <h2 className="text-base font-semibold text-slate-950">Dernieres commandes</h2>
-                            <Link href="/admin/orders" className="text-sm font-semibold text-slate-700 hover:text-slate-950">Tout voir</Link>
+                            <h2 className="text-base font-semibold text-slate-950">Commandes récentes</h2>
+                            <Link href="/admin/orders" className="text-sm font-semibold text-slate-700 hover:text-slate-950">Voir toutes les commandes</Link>
                         </div>
                         <div className="divide-y divide-slate-100">
                             {(stats.recent_orders || []).map((order) => (
@@ -135,45 +135,45 @@ export default function Dashboard({ stats }) {
                                 </div>
                             ))}
                             {(stats.recent_orders || []).length === 0 && (
-                                <p className="p-6 text-sm text-slate-500">Aucune commande recente.</p>
+                                <p className="p-6 text-sm text-slate-500">Aucune commande n'a été enregistrée récemment.</p>
                             )}
                         </div>
                     </section>
 
                     <section className="rounded-xl border border-slate-200 bg-white shadow-sm sm:col-span-2 xl:col-span-4">
                         <div className="border-b border-slate-200 p-4">
-                            <h2 className="text-base font-semibold text-slate-950">Meilleurs produits</h2>
+                            <h2 className="text-base font-semibold text-slate-950">Produits les plus vendus</h2>
                         </div>
                         <div className="divide-y divide-slate-100">
                             {(stats.top_products || []).map((product) => (
                                 <div key={product.id || product.name} className="flex items-center justify-between gap-3 p-4">
                                     <div className="flex min-w-0 items-center gap-3">
                                         <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-1">
-                                            {product.image ? <img src={product.image} alt="" className="h-full w-full object-contain" /> : <span className="text-[10px] font-semibold text-slate-400">N/A</span>}
+                                            {product.image ? <img src={product.image} alt="" className="h-full w-full object-contain" /> : <span className="text-[10px] font-semibold text-slate-400">Image non disponible</span>}
                                         </div>
                                         <div className="min-w-0">
                                             <p className="truncate font-medium text-slate-950">{product.name}</p>
                                             <p className="mt-1 text-sm text-slate-500">{money(product.price)}</p>
                                         </div>
                                     </div>
-                                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{product.total_sold} u</span>
+                                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{product.total_sold} unités</span>
                                 </div>
                             ))}
                             {(stats.top_products || []).length === 0 && (
-                                <p className="p-6 text-sm text-slate-500">Aucune vente produit.</p>
+                                <p className="p-6 text-sm text-slate-500">Aucun produit populaire pour le moment.</p>
                             )}
                         </div>
                     </section>
 
                     <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:col-span-2 xl:col-span-3">
-                        <h2 className="text-base font-semibold text-slate-950">Operations</h2>
+                        <h2 className="text-base font-semibold text-slate-950">Statistiques clés</h2>
                         <div className="mt-4 space-y-3">
                             <div className="rounded-lg bg-slate-50 p-3">
                                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Panier moyen</p>
                                 <p className="mt-2 text-xl font-semibold text-slate-950">{money(stats.panier_moyen)}</p>
                             </div>
                             <div className="rounded-lg bg-slate-50 p-3">
-                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Ruptures</p>
+                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Articles en rupture de stock</p>
                                 <p className={`mt-2 text-xl font-semibold ${stats.out_of_stock > 0 ? 'text-red-700' : 'text-green-800'}`}>{stats.out_of_stock}</p>
                             </div>
                         </div>

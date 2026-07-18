@@ -41,20 +41,20 @@ export default function Create() {
 
     return (
         <AdminLayout>
-            <Head title="Nouveau produit - Admin" />
+            <Head title="Ajouter un nouveau produit - Administration" />
 
             <form onSubmit={submit} className="space-y-5">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                        <Link href="/admin/products" className="text-sm font-semibold text-slate-500 hover:text-slate-950">Produits</Link>
-                        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Ajouter un produit</h1>
+                        <Link href="/admin/products" className="text-sm font-semibold text-slate-500 hover:text-slate-950">Retour à la liste des produits</Link>
+                        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Ajouter un nouveau produit</h1>
                     </div>
                     <div className="flex flex-wrap gap-2">
                         <Link href="/admin/products" className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
-                            Annuler
+                            Annuler l'ajout
                         </Link>
                         <button type="submit" disabled={processing} className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
-                            {processing ? 'Creation...' : 'Enregistrer'}
+                            {processing ? 'Création en cours...' : 'Enregistrer le produit'}
                         </button>
                     </div>
                 </div>
@@ -62,10 +62,10 @@ export default function Create() {
                 <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
                     <section className="space-y-5">
                         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                            <h2 className="text-base font-semibold text-slate-950">Informations</h2>
+                            <h2 className="text-base font-semibold text-slate-950">Détails du produit</h2>
                             <div className="mt-4 space-y-4">
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700">Nom</label>
+                                    <label className="text-sm font-medium text-slate-700">Nom du produit</label>
                                     <input
                                         type="text"
                                         value={data.name}
@@ -76,7 +76,7 @@ export default function Create() {
                                 </div>
 
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700">Description</label>
+                                    <label className="text-sm font-medium text-slate-700">Description détaillée</label>
                                     <textarea
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
@@ -89,10 +89,10 @@ export default function Create() {
                         </div>
 
                         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                            <h2 className="text-base font-semibold text-slate-950">Tarification et stock</h2>
+                            <h2 className="text-base font-semibold text-slate-950">Prix et gestion du stock</h2>
                             <div className="mt-4 grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700">Prix (DH)</label>
+                                    <label className="text-sm font-medium text-slate-700">Prix de vente (DH)</label>
                                     <input
                                         type="number"
                                         step="0.01"
@@ -103,7 +103,7 @@ export default function Create() {
                                     <FieldError message={errors.price} />
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700">Stock</label>
+                                    <label className="text-sm font-medium text-slate-700">Quantité en stock</label>
                                     <input
                                         type="number"
                                         value={data.stock}
@@ -118,16 +118,16 @@ export default function Create() {
 
                     <aside className="space-y-5">
                         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                            <h2 className="text-base font-semibold text-slate-950">Image principale</h2>
+                            <h2 className="text-base font-semibold text-slate-950">Image principale du produit</h2>
                             <div className="mt-4 flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4">
-                                {preview ? <img src={preview} alt="" className="h-full w-full object-contain" /> : <span className="text-sm font-medium text-slate-400">Apercu image</span>}
+                                {preview ? <img src={preview} alt="" className="h-full w-full object-contain" /> : <span className="text-sm font-medium text-slate-400">Aperçu de l'image</span>}
                             </div>
                             <input type="file" accept="image/*" onChange={handleFileChange} className="mt-4 w-full text-sm text-slate-600" />
                             <FieldError message={errors.image} />
                         </div>
 
                         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                            <h2 className="text-base font-semibold text-slate-950">Galerie</h2>
+                            <h2 className="text-base font-semibold text-slate-950">Images additionnelles (Galerie)</h2>
                             <input type="file" multiple accept="image/*" onChange={handleGalleryChange} className="mt-4 w-full text-sm text-slate-600" />
                             {galleryPreviews.length > 0 && (
                                 <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 gap-2">

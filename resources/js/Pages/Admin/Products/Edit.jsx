@@ -36,7 +36,7 @@ export default function Edit({ product }) {
     };
 
     const deleteGalleryImage = (id) => {
-        if (confirm('Supprimer cette image de la galerie ?')) {
+        if (confirm('Êtes-vous sûr(e) de vouloir supprimer cette image de la galerie ?')) {
             router.delete(`/admin/product-images/${id}`, { preserveScroll: true });
         }
     };
@@ -48,20 +48,20 @@ export default function Edit({ product }) {
 
     return (
         <AdminLayout>
-            <Head title={`Modifier ${product.name}`} />
+            <Head title={`Modifier ${product.name} - Administration`} />
 
             <form onSubmit={submit} className="space-y-5">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="min-w-0">
-                        <Link href="/admin/products" className="text-sm font-semibold text-slate-500 hover:text-slate-950">Produits</Link>
-                        <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight text-slate-950">Modifier {product.name}</h1>
+                        <Link href="/admin/products" className="text-sm font-semibold text-slate-500 hover:text-slate-950">Retour à la liste des produits</Link>
+                        <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight text-slate-950">Modifier les informations de {product.name}</h1>
                     </div>
                     <div className="flex flex-wrap gap-2">
                         <Link href="/admin/products" className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
-                            Annuler
+                            Annuler les modifications
                         </Link>
                         <button type="submit" disabled={processing} className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
-                            {processing ? 'Sauvegarde...' : 'Sauvegarder'}
+                            {processing ? 'Sauvegarde en cours...' : 'Enregistrer les modifications'}
                         </button>
                     </div>
                 </div>
@@ -69,10 +69,10 @@ export default function Edit({ product }) {
                 <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
                     <section className="space-y-5">
                         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                            <h2 className="text-base font-semibold text-slate-950">Informations</h2>
+                            <h2 className="text-base font-semibold text-slate-950">Détails du produit</h2>
                             <div className="mt-4 space-y-4">
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700">Nom</label>
+                                    <label className="text-sm font-medium text-slate-700">Nom du produit</label>
                                     <input
                                         type="text"
                                         value={data.name}
@@ -83,7 +83,7 @@ export default function Edit({ product }) {
                                 </div>
 
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700">Description</label>
+                                    <label className="text-sm font-medium text-slate-700">Description détaillée</label>
                                     <textarea
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
@@ -96,10 +96,10 @@ export default function Edit({ product }) {
                         </div>
 
                         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                            <h2 className="text-base font-semibold text-slate-950">Tarification et stock</h2>
+                            <h2 className="text-base font-semibold text-slate-950">Prix et gestion du stock</h2>
                             <div className="mt-4 grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700">Prix (DH)</label>
+                                    <label className="text-sm font-medium text-slate-700">Prix de vente (DH)</label>
                                     <input
                                         type="number"
                                         step="0.01"
@@ -110,7 +110,7 @@ export default function Edit({ product }) {
                                     <FieldError message={errors.price} />
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700">Stock</label>
+                                    <label className="text-sm font-medium text-slate-700">Quantité en stock</label>
                                     <input
                                         type="number"
                                         value={data.stock}
@@ -125,9 +125,9 @@ export default function Edit({ product }) {
 
                     <aside className="space-y-5">
                         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                            <h2 className="text-base font-semibold text-slate-950">Image principale</h2>
+                            <h2 className="text-base font-semibold text-slate-950">Image principale du produit</h2>
                             <div className="mt-4 flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4">
-                                {preview ? <img src={preview} alt="" className="h-full w-full object-contain" /> : <span className="text-sm font-medium text-slate-400">Apercu image</span>}
+                                {preview ? <img src={preview} alt="" className="h-full w-full object-contain" /> : <span className="text-sm font-medium text-slate-400">Aperçu de l'image</span>}
                             </div>
                             <input type="file" accept="image/*" onChange={handleFileChange} className="mt-4 w-full text-sm text-slate-600" />
                             <FieldError message={errors.image} />
@@ -135,7 +135,7 @@ export default function Edit({ product }) {
 
                         {product.images?.length > 0 && (
                             <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                                <h2 className="text-base font-semibold text-slate-950">Galerie actuelle</h2>
+                                <h2 className="text-base font-semibold text-slate-950">Galerie d'images existante</h2>
                                 <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 gap-2">
                                     {product.images.map((image) => (
                                         <div key={image.id} className="group relative aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-1">
@@ -154,7 +154,7 @@ export default function Edit({ product }) {
                         )}
 
                         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                            <h2 className="text-base font-semibold text-slate-950">Ajouter a la galerie</h2>
+                            <h2 className="text-base font-semibold text-slate-950">Ajouter des images à la galerie</h2>
                             <input type="file" multiple accept="image/*" onChange={handleGalleryChange} className="mt-4 w-full text-sm text-slate-600" />
                             {galleryPreviews.length > 0 && (
                                 <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 gap-2">

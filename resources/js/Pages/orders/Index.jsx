@@ -18,15 +18,15 @@ export default function Index({ orders }) {
         }
     };
 
-    // 🔥 🚀 LA FONCTION OPTIMISÉE: Kat-tiri print mra w7da clean o safya m l-background!
+    // 🔥 🚀 LA FONCTION OPTIMISÉE: Permet d'imprimer une facture propre et sans arrière-plan !
     const handleDownloadInvoice = (e, orderId) => {
         e.preventDefault();
 
-        // 1. Suppression dial les doublons
+        // 1. Suppression des doublons existants
         const existingIframe = document.getElementById(`invoice-iframe-${orderId}`);
         if (existingIframe) existingIframe.remove();
 
-        // 2. Création dial l-iframe completely hidden
+        // 2. Création d'un iframe complètement masqué
         const iframe = document.createElement('iframe');
         iframe.id = `invoice-iframe-${orderId}`;
         iframe.style.position = 'fixed';
@@ -36,10 +36,10 @@ export default function Index({ orders }) {
         iframe.style.height = '0px';
         iframe.style.border = 'none';
 
-        // Sifet l-src l-la route dial la facture
+        // Définition de la source de l'iframe vers la route de la facture
         iframe.src = `/orders/${orderId}/invoice`;
 
-        // 3. Trigger mra w7da mlli kay-sharga l-content completely
+        // 3. Déclenchement de l'impression une fois le contenu entièrement chargé
         iframe.onload = function() {
             setTimeout(() => {
                 try {
@@ -48,7 +48,7 @@ export default function Index({ orders }) {
                 } catch (error) {
                     console.error("Erreur d'impression:", error);
                 }
-            }, 300); // Wa9t optimisé bach may-trash double print
+            }, 300); // Délai optimisé pour éviter les impressions multiples
         };
 
         document.body.appendChild(iframe);
@@ -56,7 +56,7 @@ export default function Index({ orders }) {
 
     return (
         <div className="bg-[#f8fafc] min-h-screen text-slate-900 antialiased font-sans">
-            <Head title="Mon Historique de Commandes - monocle." />
+            <Head title="Mon historique de commandes - monocle." />
 
             {/* 📱 RESPONSIVE NAVIGATION PADDINGS */}
             <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/50 px-4 sm:px-6 py-3.5 sm:py-4 flex justify-between items-center sticky top-0 z-50">
@@ -65,7 +65,7 @@ export default function Index({ orders }) {
                     <span>monocle<span className="text-blue-600 font-black">.</span></span>
                 </Link>
                 <Link href="/" className="text-[10px] sm:text-[11px] font-bold text-slate-500 hover:text-slate-900 transition bg-slate-50 border border-slate-200/60 px-2.5 py-1.5 rounded-xl">
-                    ← <span className="hidden sm:inline">Retourner à la</span> boutique
+                    ← Poursuivre mes achats
                 </Link>
             </nav>
 
@@ -73,16 +73,16 @@ export default function Index({ orders }) {
 
                 {/* Responsive Header block */}
                 <div className="mb-6 sm:mb-10 pb-4 sm:pb-5 border-b border-slate-200/60">
-                    <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Espace Client</span>
-                    <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 mt-1">Historique de vos Commandes</h1>
-                    <p className="text-xs text-slate-400 mt-0.5">Vos achats récents présentés sous forme de fiches de suivi.</p>
+                    <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Votre espace client</span>
+                    <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 mt-1">Mon historique de commandes</h1>
+                    <p className="text-xs text-slate-400 mt-0.5">Consultez le statut de vos commandes et téléchargez vos factures en toute simplicité.</p>
                 </div>
 
                 {sortedOrders.length === 0 ? (
                     <div className="bg-white p-8 sm:p-12 rounded-2xl border border-slate-200/60 text-center shadow-2xs">
-                        <p className="text-slate-400 text-xs font-medium mb-4">Vous n'avez pas encore passé de commande sur notre boutique.</p>
+                        <p className="text-slate-400 text-xs font-medium mb-4">Vous n'avez pas encore passé de commande.</p>
                         <Link href="/" className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition inline-block">
-                            Découvrir nos collections
+                            Découvrir nos produits
                         </Link>
                     </div>
                 ) : (
@@ -99,7 +99,7 @@ export default function Index({ orders }) {
                                     <div className="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/30">
                                         <div className="flex justify-between items-start gap-2 mb-3">
                                             <div>
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Référence</p>
+                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Numéro de commande</p>
                                                 <p className="font-mono text-slate-900 font-bold text-xs tracking-tight">#{order.id}</p>
                                             </div>
 
@@ -114,13 +114,18 @@ export default function Index({ orders }) {
                                                         order.status === 'payé' ? 'bg-blue-500' :
                                                             order.status === 'expédié' ? 'bg-indigo-500' : 'bg-emerald-500'
                                                 }`}></span>
-                                                <span className="uppercase tracking-wider text-[7px]">{order.status || 'en_attente'}</span>
+                                                <span className="uppercase tracking-wider text-[7px]">
+                                                    {order.status === 'en_attente' ? 'En attente de traitement' :
+                                                        order.status === 'payé' ? 'Payée' :
+                                                            order.status === 'expédié' ? 'Expédiée' :
+                                                                order.status === 'livré' ? 'Livrée' : order.status}
+                                                </span>
                                             </span>
                                         </div>
 
                                         <div className="flex justify-between items-end mt-4 gap-2">
                                             <div>
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Date d'achat</p>
+                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Date de commande</p>
                                                 <p className="text-slate-800 font-bold text-xs whitespace-nowrap">
                                                     {new Date(order.created_at).toLocaleDateString('fr-FR', {
                                                         year: 'numeric', month: 'short', day: 'numeric'
@@ -128,7 +133,7 @@ export default function Index({ orders }) {
                                                 </p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Montant</p>
+                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Montant total</p>
                                                 <p className="text-base font-black text-slate-900 tracking-tight whitespace-nowrap">
                                                         {totalPrice.toFixed(2)} DH
                                                 </p>
@@ -138,10 +143,10 @@ export default function Index({ orders }) {
 
                                     <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-4">
                                         <div>
-                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">Articles ({items.length})</p>
+                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">Articles commandés ({items.length})</p>
 
                                             {items.length === 0 ? (
-                                                <p className="text-xs text-slate-400 italic">Aucun détail disponible.</p>
+                                                <p className="text-xs text-slate-400 italic">Aucun article n'est listé pour cette commande.</p>
                                             ) : (
                                                 /* Secure inner image list container */
                                                 <div className="flex flex-wrap gap-2 max-h-[110px] overflow-y-auto pr-1">
@@ -154,7 +159,7 @@ export default function Index({ orders }) {
                                                             {item.image ? (
                                                                 <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply" />
                                                             ) : (
-                                                                <span className="text-[8px] text-slate-300 font-bold">👓</span>
+                                                                <span className="text-[8px] text-slate-300 font-bold">Image produit</span>
                                                             )}
                                                             <span className="absolute -top-1 -right-1 bg-slate-900 text-white text-[7px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border border-white">
                                                                 {item.quantity || 1}
@@ -171,7 +176,7 @@ export default function Index({ orders }) {
                                                 onClick={(e) => handleDownloadInvoice(e, order.id)}
                                                 className="w-full text-center text-[10px] font-extrabold text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 px-3 py-2.5 rounded-xl border border-slate-200/70 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 select-none"
                                             >
-                                                📑 Télécharger la facture
+                                                📑 Télécharger ma facture
                                             </button>
                                         </div>
                                     </div>

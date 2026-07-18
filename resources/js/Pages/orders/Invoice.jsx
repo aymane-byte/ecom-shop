@@ -8,10 +8,21 @@ export default function Invoice({ order }) {
         window.print();
     };
 
+    const getStatusLabel = (status) => {
+        switch (status) {
+            case 'en_attente': return 'En attente de traitement';
+            case 'payé': return 'Payée';
+            case 'expédié': return 'Expédiée';
+            case 'livré': return 'Livrée';
+            case 'annulé': return 'Annulée';
+            default: return status;
+        }
+    };
+
     return (
         <div className="bg-slate-50 min-h-screen py-6 sm:py-12 px-4 print:bg-white print:py-0 print:px-0">
             <Head>
-                <title>{`Facture #${order.id} - monocle.`}</title>
+                <title>{`Facture de commande #${order.id} - monocle.`}</title>
                 <style type="text/css" media="print">{`
                     @page {
                         size: A4;
@@ -33,13 +44,13 @@ export default function Invoice({ order }) {
                     onClick={() => window.history.back()}
                     className="text-xs font-bold text-slate-500 hover:text-slate-900 transition flex items-center gap-2"
                 >
-                    ← Retour
+                    ← Retour à mes commandes
                 </button>
                 <button
                     onClick={handlePrint}
                     className="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg hover:bg-slate-800 transition active:scale-95 flex items-center gap-2"
                 >
-                    🖨️ Imprimer la facture
+                    Imprimer la facture
                 </button>
             </div>
 
@@ -53,14 +64,15 @@ export default function Invoice({ order }) {
                             <span className="bg-slate-900 text-white p-2 rounded-xl text-xs">👓</span>
                             <span>monocle<span className="text-blue-600">.</span></span>
                         </div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">E-commerce</p>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Kenitra, Maroc</p>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">contact@monocle.com</p>
                     </div>
                     <div className="text-right">
-                        <h1 className="text-3xl font-black uppercase tracking-tighter text-slate-900 leading-none">Facture</h1>
+                        <h1 className="text-3xl font-black uppercase tracking-tighter text-slate-900 leading-none">Détail de la facture</h1>
                         <p className="font-mono text-xs font-black text-slate-400 mt-2">#INV-{order.id}</p>
                         <p className="text-[10px] font-black text-slate-500 mt-1 uppercase tracking-wider">
-                            Date: {order.created_at}
+                            Date de la facture : {order.created_at}
                         </p>
                     </div>
                 </div>
@@ -68,7 +80,7 @@ export default function Invoice({ order }) {
                 {/* Info Client & Expédition */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-10">
                     <div className="space-y-4">
-                        <h3 className="font-black text-slate-300 uppercase text-[9px] tracking-[0.2em] border-b border-slate-100 pb-1">Facturé à:</h3>
+                        <h3 className="font-black text-slate-300 uppercase text-[9px] tracking-[0.2em] border-b border-slate-100 pb-1">Informations de facturation :</h3>
                         <div className="pl-1">
                             <p className="font-black text-slate-900 text-base capitalize leading-tight mb-1">{order.customer_name}</p>
                             <p className="text-xs font-bold text-slate-500 lowercase">{order.customer_email}</p>
@@ -76,7 +88,7 @@ export default function Invoice({ order }) {
                         </div>
                     </div>
                     <div className="space-y-4">
-                        <h3 className="font-black text-slate-300 uppercase text-[9px] tracking-[0.2em] border-b border-slate-100 pb-1">Adresse de Livraison:</h3>
+                        <h3 className="font-black text-slate-300 uppercase text-[9px] tracking-[0.2em] border-b border-slate-100 pb-1">Adresse de livraison :</h3>
                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 italic text-xs text-slate-600 leading-relaxed shadow-inner font-medium">
                             {order.customer_address}
                         </div>
@@ -85,8 +97,8 @@ export default function Invoice({ order }) {
 
                 {/* Statut de la commande */}
                 <div className="mb-10 flex items-center gap-3 bg-slate-900 text-white px-4 py-2 rounded-xl w-fit">
-                    <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Statut:</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest">{order.status}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Statut de la commande :</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest">{getStatusLabel(order.status)}</span>
                 </div>
 
                 {/* Table des articles */}
@@ -108,12 +120,12 @@ export default function Invoice({ order }) {
                                             {item.image ? (
                                                 <img src={item.image} alt="" className="w-full h-full object-contain" />
                                             ) : (
-                                                <span className="text-[10px] font-black text-slate-300">👓</span>
+                                                <span className="text-[10px] font-black text-slate-300">Image produit</span>
                                             )}
                                         </div>
                                         <div>
                                             <p className="font-black text-slate-900 capitalize text-sm">{item.name}</p>
-                                            <p className="text-[9px] text-slate-400 font-bold uppercase">Réf: MON-{item.id || index + 100}</p>
+                                            <p className="text-[9px] text-slate-400 font-bold uppercase">Référence : MON-{item.id || index + 100}</p>
                                         </div>
                                     </td>
                                     <td className="py-5 text-center font-black text-slate-600">{item.quantity}</td>
@@ -132,12 +144,12 @@ export default function Invoice({ order }) {
                                     {item.image ? (
                                         <img src={item.image} alt="" className="w-full h-full object-contain" />
                                     ) : (
-                                        <span className="text-[10px] font-black text-slate-300">👓</span>
+                                        <span className="text-[10px] font-black text-slate-300">Image produit</span>
                                     )}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-black text-slate-900 capitalize text-sm truncate">{item.name}</p>
-                                    <p className="text-[9px] text-slate-400 font-bold uppercase">Réf: MON-{item.id || index + 100}</p>
+                                    <p className="text-[9px] text-slate-400 font-bold uppercase">Référence : MON-{item.id || index + 100}</p>
                                     <div className="mt-2 flex justify-between items-center">
                                         <span className="text-xs font-black text-slate-600">Qté: {item.quantity}</span>
                                         <span className="text-sm font-black text-slate-900">{(item.price * item.quantity).toFixed(2)} DH</span>
@@ -152,15 +164,15 @@ export default function Invoice({ order }) {
                 <div className="flex flex-col items-end pt-6 border-t-2 border-slate-900">
                     <div className="w-64 space-y-3">
                         <div className="flex justify-between items-center text-xs font-bold text-slate-500">
-                            <span>SOUS-TOTAL</span>
+                            <span>Sous-total</span>
                             <span>{Number(order.total_price).toFixed(2)} DH</span>
                         </div>
                         <div className="flex justify-between items-center text-xs font-bold text-slate-500">
-                            <span>LIVRAISON</span>
-                            <span className="text-emerald-600 font-black">GRATUIT</span>
+                            <span>Frais de livraison</span>
+                            <span className="text-emerald-600 font-black">Offerts</span>
                         </div>
                         <div className="flex justify-between items-center bg-slate-900 text-white p-4 rounded-2xl shadow-lg mt-4">
-                            <span className="text-[10px] font-black tracking-[0.2em]">TOTAL TTC</span>
+                            <span className="text-[10px] font-black tracking-[0.2em]">Total TTC</span>
                             <span className="text-xl font-black">{Number(order.total_price).toFixed(2)} DH</span>
                         </div>
                     </div>
@@ -171,11 +183,11 @@ export default function Invoice({ order }) {
                     <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest space-y-1">
                         <p>Monocle Optique S.A.R.L</p>
                         <p>IF: 45678912 — RC: 32145</p>
-                        <p>Merci pour votre confiance !</p>
+                        <p>Nous vous remercions de votre confiance !</p>
                     </div>
                     <div className="text-right">
                         <div className="w-32 h-16 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center opacity-30 grayscale mb-2 mx-auto">
-                            <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Cachet & Signature</span>
+                            <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Cachet et signature</span>
                         </div>
                     </div>
                 </div>

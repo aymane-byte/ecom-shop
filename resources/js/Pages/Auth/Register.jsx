@@ -16,7 +16,7 @@ export default function Register() {
 
     return (
         <div className="bg-[#f8f9fa] min-h-screen flex items-center justify-center p-4 sm:p-6 antialiased font-sans">
-            <Head title="Créer un compte - monocle." />
+            <Head title="Créer votre compte - monocle." />
 
             {/* 📱 RESPONSIVE WIDTH & PADDING FOR CONTAINER */}
             <div className="w-full max-w-md bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs">
@@ -27,33 +27,33 @@ export default function Register() {
                         <span className="bg-slate-900 text-white p-1.5 rounded-lg text-xs shadow-2xs">👓</span>
                         <span>monocle<span className="text-blue-600 font-black">.</span></span>
                     </Link>
-                    <p className="text-[11px] sm:text-xs text-slate-400 mt-2 font-medium px-2">Créez votre accès client pour suivre vos commandes d'optique.</p>
+                    <p className="text-[11px] sm:text-xs text-slate-400 mt-2 font-medium px-2">Créez votre compte client pour suivre vos commandes, gérer vos informations et bénéficier d'une expérience d'achat simplifiée.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
 
                     {/* Nom Complet */}
                     <div>
-                        <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Nom Complet</label>
+                        <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Nom et prénom</label>
                         <input
                             type="text"
                             value={data.name}
                             onChange={e => setData('name', e.target.value)}
                             className="w-full mt-1.5 border border-slate-200 bg-[#fbfbfc] p-3 rounded-xl outline-none text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-slate-400 focus:bg-white transition"
-                            placeholder="Ex: Aymane El-Khair"
+                            placeholder="Entrez votre nom et prénom"
                         />
                         {errors.name && <p className="text-rose-500 text-xs mt-1.5 font-medium">⚠️ {errors.name}</p>}
                     </div>
 
                     {/* Email */}
                     <div>
-                        <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Adresse Email</label>
+                        <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Adresse e-mail</label>
                         <input
                             type="email"
                             value={data.email}
                             onChange={e => setData('email', e.target.value)}
                             className="w-full mt-1.5 border border-slate-200 bg-[#fbfbfc] p-3 rounded-xl outline-none text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-slate-400 focus:bg-white transition"
-                            placeholder="nom@exemple.com"
+                            placeholder="Votre adresse e-mail"
                         />
                         {errors.email && <p className="text-rose-500 text-xs mt-1.5 font-medium">⚠️ {errors.email}</p>}
                     </div>
@@ -71,7 +71,7 @@ export default function Register() {
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Confirmation</label>
+                            <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Confirmer le mot de passe</label>
                             <input
                                 type="password"
                                 value={data.password_confirmation}
@@ -89,14 +89,14 @@ export default function Register() {
                         disabled={processing}
                         className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 sm:py-3.5 rounded-xl transition shadow-xs mt-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-99 truncate"
                     >
-                        {processing ? 'Création en cours...' : 'Créer mon compte'}
+                        {processing ? 'Création de compte en cours...' : 'Créer mon compte'}
                     </button>
                 </form>
 
                 {/* Footer Link Switcher */}
                 <div className="text-center mt-6 pt-4 border-t border-slate-100">
                     <Link href="/login" className="text-xs text-slate-400 hover:text-blue-600 font-semibold transition block">
-                        Déjà inscrit ? <span className="underline text-slate-600 hover:text-blue-600">Se connecter</span>
+                        Déjà client ? <span className="underline text-slate-600 hover:text-blue-600">Se connecter</span>
                     </Link>
                 </div>
             </div>

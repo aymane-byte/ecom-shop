@@ -52,7 +52,7 @@ export default function Show({ product }) {
     const handleDirectOrder = (e) => {
         e.preventDefault();
         if (!formData.customer_name || !formData.customer_email || !formData.customer_phone || !formData.customer_city || !formData.customer_address) {
-            alert('Veuillez remplir tous les champs obligatoires.');
+            alert('Veuillez compléter tous les champs obligatoires.');
             return;
         }
 
@@ -64,7 +64,7 @@ export default function Show({ product }) {
 
     const specs = product.description
         ? product.description.split('\n').filter(line => line.trim() !== '')
-        : ["Aucune spécification technique disponible."];
+        : ["Aucune description détaillée disponible pour ce produit."];
 
     const scroll = (direction) => {
         if (scrollRef.current) {
@@ -79,7 +79,7 @@ export default function Show({ product }) {
 
     return (
         <div className="bg-[#FAFAFA] min-h-screen text-slate-900 antialiased font-sans selection:bg-blue-100">
-            <Head title={`${product.name} — monocle.`} />
+            <Head title={`${product.name} - Détails du produit | monocle.`} />
 
             {/* 💎 BARRE DE NAVIGATION HAUT DE GAMME */}
             <header className="bg-white/80 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-50 transition-all">
@@ -93,13 +93,13 @@ export default function Show({ product }) {
 
                     <div className="flex items-center gap-2 sm:gap-3 lg:gap-6">
                         <Link href="/orders" className="text-[10px] sm:text-xs font-semibold text-slate-500 hover:text-slate-950 transition hidden sm:block">
-                            Mes Commandes
+                            Mes commandes
                         </Link>
                         <Link
                             href="/cart"
                             className="bg-slate-950 hover:bg-slate-800 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-bold text-[10px] sm:text-xs flex items-center gap-1.5 sm:gap-2 transition-all shadow-sm active:scale-95"
                         >
-                            <span>Panier</span>
+                            <span>Mon panier</span>
                             {cartCount > 0 && (
                                 <span className="bg-blue-600 text-white text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-full animate-pulse">
                                     {cartCount}
@@ -114,7 +114,7 @@ export default function Show({ product }) {
 
                 {/* Fil d'ariane */}
                 <nav className="mb-4 sm:mb-8 flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-slate-400 tracking-wide uppercase">
-                    <Link href="/" className="hover:text-slate-950 transition">Boutique</Link>
+                    <Link href="/" className="hover:text-slate-950 transition">Explorer nos produits</Link>
                     <span>/</span>
                     <span className="text-slate-800 font-extrabold truncate">{product.name}</span>
                 </nav>
@@ -134,13 +134,13 @@ export default function Show({ product }) {
                                     className="max-h-[40vh] sm:max-h-[50vh] lg:max-h-full max-w-full object-contain mix-blend-multiply transition-all duration-700 ease-out group-hover:scale-105"
                                 />
                             ) : (
-                                <div className="text-slate-300 font-bold text-xs uppercase tracking-widest">Image non disponible</div>
+                                <div className="text-slate-300 font-bold text-xs uppercase tracking-widest">Image non disponible pour le moment</div>
                             )}
 
                             {/* Badge Studio / Authenticité */}
                             <div className="absolute top-2 sm:top-5 left-2 sm:left-5 bg-slate-900/5 backdrop-blur-md px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-full border border-slate-900/10 flex items-center gap-1.5 sm:gap-2">
                                 <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                                <span className="text-[8px] sm:text-[10px] font-extrabold text-slate-700 uppercase tracking-wider">Produit Authentique</span>
+                                <span className="text-[8px] sm:text-[10px] font-extrabold text-slate-700 uppercase tracking-wider">Qualité certifiée</span>
                             </div>
                         </div>
 
@@ -172,7 +172,7 @@ export default function Show({ product }) {
                                                     : 'border-slate-200/70 opacity-60 hover:opacity-100 hover:border-slate-300'
                                             }`}
                                         >
-                                            <img src={img.path} className="max-h-full max-w-full object-contain mix-blend-multiply" alt="Vignette" />
+                                            <img src={img.path} className="max-h-full max-w-full object-contain mix-blend-multiply" alt="Aperçu" />
                                         </button>
                                     ))}
                                 </div>
@@ -192,7 +192,7 @@ export default function Show({ product }) {
                                         : 'bg-rose-50 border-rose-200 text-rose-700'
                                 }`}>
                                     <span className={`w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full ${product.stock > 0 ? (product.stock < 5 ? 'bg-amber-500' : 'bg-emerald-500') : 'bg-rose-500'}`}></span>
-                                    {product.stock > 0 ? (product.stock < 5 ? `Plus que ${product.stock} en stock` : 'En Stock') : 'Rupture de stock'}
+                                    {product.stock > 0 ? (product.stock < 5 ? `Stock limité (${product.stock})` : 'En stock') : 'Actuellement en rupture de stock'}
                                 </span>
 
                                 <span className="text-[10px] sm:text-xs font-semibold text-slate-400">Réf: #{product.id.toString().padStart(4, '0')}</span>
@@ -206,14 +206,14 @@ export default function Show({ product }) {
                                 <span className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
                                     {formattedPrice(product.price)}
                                 </span>
-                                <span className="text-[10px] sm:text-xs font-semibold text-slate-400">TVA incluse</span>
+                                <span className="text-[10px] sm:text-xs font-semibold text-slate-400">TVA incluse (Prix final)</span>
                             </div>
                         </div>
 
                         {/* Spécifications & Caractéristiques */}
                         <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/70 shadow-2xs space-y-3">
                             <h2 className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
-                                Caractéristiques
+                                Caractéristiques détaillées
                             </h2>
                             <ul className="space-y-2 sm:space-y-2.5 text-[11px] sm:text-xs font-semibold text-slate-600">
                                 {specs.map((spec, index) => (
@@ -230,7 +230,7 @@ export default function Show({ product }) {
                         {/* Sélecteur de Quantité */}
                         {product.stock > 0 && (
                             <div className="flex items-center justify-between bg-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border border-slate-200/70 shadow-2xs">
-                                <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Quantité</span>
+                                <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Quantité souhaitée</span>
                                 <div className="flex items-center gap-2 sm:gap-3 bg-slate-50 border border-slate-200 rounded-xl p-1">
                                     <button
                                         type="button"
@@ -263,7 +263,7 @@ export default function Show({ product }) {
                                         : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none'
                                 }`}
                             >
-                                <span>Ajouter au Panier</span>
+                                <span>Ajouter au panier</span>
                                 <span className="text-sm sm:text-base">🛒</span>
                             </button>
 
@@ -277,7 +277,7 @@ export default function Show({ product }) {
                                         : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none'
                                 }`}
                             >
-                                <span>{showOrderForm ? 'Masquer le Formulaire' : 'Acheter Maintenant (Express)'}</span>
+                                <span>{showOrderForm ? 'Masquer le formulaire de commande' : 'Commander maintenant'}</span>
                                 <span className="text-sm sm:text-base">⚡</span>
                             </button>
                         </div>
@@ -287,19 +287,19 @@ export default function Show({ product }) {
                             <div className="bg-white border-2 border-blue-600/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-5 animate-in fade-in slide-in-from-top-4 duration-300">
                                 <div className="border-b border-slate-100 pb-2 sm:pb-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                                     <div>
-                                        <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-950">Commande Rapide</h3>
-                                        <p className="text-[9px] sm:text-[10px] font-medium text-slate-400">Paiement à la livraison partout au Maroc</p>
+                                        <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-950">Commande express</h3>
+                                        <p className="text-[9px] sm:text-[10px] font-medium text-slate-400">Paiement à la livraison sécurisé partout au Maroc</p>
                                     </div>
-                                    <span className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 font-extrabold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg">Paiement Cash 💵</span>
+                                    <span className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 font-extrabold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg">Paiement à la livraison 💵</span>
                                 </div>
 
                                 <form onSubmit={handleDirectOrder} className="space-y-3 sm:space-y-3.5">
                                     <div>
-                                        <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Nom complet *</label>
+                                        <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Nom et prénom *</label>
                                         <input
                                             type="text"
                                             required
-                                            placeholder="Ex: Amine Benali"
+                                            placeholder="Entrez votre nom et prénom"
                                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-950 focus:bg-white transition"
                                             value={formData.customer_name}
                                             onChange={e => setFormData({ ...formData, customer_name: e.target.value })}
@@ -308,25 +308,25 @@ export default function Show({ product }) {
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                                         <div>
-                                            <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Téléphone *</label>
+                                            <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Numéro de téléphone *</label>
                                             <input
                                                 type="tel"
                                                 required
-                                                placeholder="06 00 00 00 00"
+                                                placeholder="Votre numéro de téléphone"
                                                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-950 focus:bg-white transition"
                                                 value={formData.customer_phone}
                                                 onChange={e => setFormData({ ...formData, customer_phone: e.target.value })}
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Ville *</label>
+                                            <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Ville de livraison *</label>
                                             <select
                                                 required
                                                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-950 focus:bg-white transition cursor-pointer"
                                                 value={formData.customer_city}
                                                 onChange={e => setFormData({ ...formData, customer_city: e.target.value })}
                                             >
-                                                <option value="" disabled>Sélectionner la ville</option>
+                                                <option value="" disabled>Sélectionnez votre ville</option>
                                                 {marocCities.map(city => (
                                                     <option key={city} value={city}>{city}</option>
                                                 ))}
@@ -335,11 +335,11 @@ export default function Show({ product }) {
                                     </div>
 
                                     <div>
-                                        <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Email *</label>
+                                        <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Adresse e-mail *</label>
                                         <input
                                             type="email"
                                             required
-                                            placeholder="votre@email.com"
+                                            placeholder="Votre adresse e-mail"
                                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-950 focus:bg-white transition disabled:opacity-60"
                                             value={formData.customer_email}
                                             onChange={e => setFormData({ ...formData, customer_email: e.target.value })}
@@ -348,11 +348,11 @@ export default function Show({ product }) {
                                     </div>
 
                                     <div>
-                                        <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Adresse de livraison *</label>
+                                        <label className="block text-[9px] sm:text-[10px] font-bold uppercase text-slate-400 mb-1">Adresse complète de livraison *</label>
                                         <textarea
                                             required
                                             rows="2"
-                                            placeholder="Quartier, Rue, N° d'appartement..."
+                                            placeholder="Votre adresse complète (rue, quartier, numéro de maison/appartement)"
                                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-950 focus:bg-white transition resize-none"
                                             value={formData.customer_address}
                                             onChange={e => setFormData({ ...formData, customer_address: e.target.value })}
@@ -362,14 +362,14 @@ export default function Show({ product }) {
                                     {/* Total & Submit */}
                                     <div className="bg-slate-50 rounded-2xl p-3 sm:p-4 border border-slate-100 space-y-2 sm:space-y-3 mt-3 sm:mt-4">
                                         <div className="flex justify-between items-center text-[11px] sm:text-xs font-bold text-slate-600">
-                                            <span>Montant Total :</span>
+                                            <span>Montant total à payer :</span>
                                             <span className="text-sm sm:text-base font-black text-slate-950">{formattedPrice(Number(product.price) * quantity)}</span>
                                         </div>
                                         <button
                                             type="submit"
                                             className="w-full bg-slate-950 hover:bg-slate-800 text-white font-extrabold text-[10px] sm:text-xs uppercase tracking-wider py-3 sm:py-3.5 rounded-xl shadow-md transition active:scale-98 cursor-pointer"
                                         >
-                                            Confirmer ma Commande
+                                            Finaliser ma commande
                                         </button>
                                     </div>
                                 </form>
@@ -380,18 +380,18 @@ export default function Show({ product }) {
                         <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-200/60 text-center">
                             <div className="p-2 sm:p-3 bg-white rounded-xl sm:rounded-2xl border border-slate-200/60 space-y-1">
                                 <span className="text-sm sm:text-base">🚚</span>
-                                <h4 className="text-[9px] sm:text-[10px] font-bold text-slate-900 uppercase">Livraison 24/48h</h4>
+                                <h4 className="text-[9px] sm:text-[10px] font-bold text-slate-900 uppercase">Livraison rapide</h4>
                                 <p className="text-[8px] sm:text-[9px] text-slate-400 font-medium">Partout au Maroc</p>
                             </div>
                             <div className="p-2 sm:p-3 bg-white rounded-xl sm:rounded-2xl border border-slate-200/60 space-y-1">
                                 <span className="text-sm sm:text-base">🤝</span>
-                                <h4 className="text-[9px] sm:text-[10px] font-bold text-slate-900 uppercase">Paiement Cache</h4>
-                                <p className="text-[8px] sm:text-[9px] text-slate-400 font-medium">À la livraison</p>
+                                <h4 className="text-[9px] sm:text-[10px] font-bold text-slate-900 uppercase">Paiement à la livraison</h4>
+                                <p className="text-[8px] sm:text-[9px] text-slate-400 font-medium">Payez à la réception</p>
                             </div>
                             <div className="p-2 sm:p-3 bg-white rounded-xl sm:rounded-2xl border border-slate-200/60 space-y-1">
                                 <span className="text-sm sm:text-base">✨</span>
-                                <h4 className="text-[9px] sm:text-[10px] font-bold text-slate-900 uppercase">Garantie 100%</h4>
-                                <p className="text-[8px] sm:text-[9px] text-slate-400 font-medium">Produit certifié</p>
+                                <h4 className="text-[9px] sm:text-[10px] font-bold text-slate-900 uppercase">Satisfaction garantie</h4>
+                                <p className="text-[8px] sm:text-[9px] text-slate-400 font-medium">Produits de qualité supérieure</p>
                             </div>
                         </div>
 
@@ -399,6 +399,102 @@ export default function Show({ product }) {
 
                 </div>
             </main>
+            {/* 🏁 FOOTER E-COMMERCE PREMIUM */}
+            <footer className="bg-white border-t border-slate-200/80 mt-16 sm:mt-24">
+                {/* Section Engagement & Réassurance */}
+                <div className="border-b border-slate-100">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
+                        <div className="flex items-center justify-center md:justify-start gap-3.5">
+                            <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-base shrink-0">
+                                🚚
+                            </div>
+                            <div>
+                                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Livraison rapide partout au Maroc</h4>
+                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">Recevez vos produits chez vous, rapidement et en toute sécurité.</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-center md:justify-start gap-3.5">
+                            <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-base shrink-0">
+                                💵
+                            </div>
+                            <div>
+                                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Paiement à la livraison</h4>
+                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">Payez en toute confiance à la réception de votre commande.</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-center md:justify-start gap-3.5">
+                            <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-base shrink-0">
+                                ✨
+                            </div>
+                            <div>
+                                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Qualité supérieure garantie</h4>
+                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">Des produits soigneusement sélectionnés pour votre entière satisfaction.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Navigation & Branding Footer */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-12">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
+
+                        {/* Marque & Intro */}
+                        <div className="md:col-span-5 space-y-3.5">
+                            <Link href="/" className="text-lg font-bold tracking-tight text-slate-900 flex items-center gap-2">
+                                <span className="bg-slate-900 text-white w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-black">
+                                    M.
+                                </span>
+                                <span className="font-black tracking-tighter">monocle<span className="text-blue-600">.</span></span>
+                            </Link>
+                            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+                                Votre partenaire de confiance pour des montures optiques de qualité exceptionnelle. Nous nous engageons à vous offrir un service client réactif et des prix compétitifs pour une satisfaction garantie.
+                            </p>
+                        </div>
+
+                        {/* Liens Rapides */}
+                        <div className="md:col-span-3 space-y-3">
+                            <h5 className="text-[11px] font-black uppercase tracking-widest text-slate-900">Liens utiles</h5>
+                            <ul className="space-y-2 text-xs font-semibold text-slate-500">
+                                <li>
+                                    <Link href="/" className="hover:text-slate-900 transition">Explorer nos produits</Link>
+                                </li>
+                                <li>
+                                    <Link href="/cart" className="hover:text-slate-900 transition">Accéder à mon panier</Link>
+                                </li>
+                                {auth?.user && (
+                                    <li>
+                                        <Link href="/orders" className="hover:text-slate-900 transition">Suivre mes commandes</Link>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+
+                        {/* Informations Légales / Contact */}
+                        <div className="md:col-span-4 space-y-3">
+                            <h5 className="text-[11px] font-black uppercase tracking-widest text-slate-900">Besoin d'aide ?</h5>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Une question sur nos produits ou votre commande ? Notre service client est à votre disposition pour vous accompagner.
+                            </p>
+                            <div className="pt-1 text-xs font-bold text-slate-800">
+                                ✉️ support@monocle-optics.com
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/* Copyright & Crédits */}
+                    <div className="mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-[11px] font-medium text-slate-400">
+                        <p>© {new Date().getFullYear()} monocle. Tous droits réservés.</p>
+                        <div className="flex items-center gap-4">
+                            <span className="hover:text-slate-600 transition cursor-pointer">Mentions légales</span>
+                            <span>•</span>
+                            <span className="hover:text-slate-600 transition cursor-pointer">Politique de confidentialité</span>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }
