@@ -12,13 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('product_variants', function (Blueprint $table) {
-            // Add missing columns
-            $table->string('sku')->nullable()->after('product_id');
-            $table->decimal('price', 10, 2)->nullable()->after('sku');
-            $table->decimal('discount_price', 10, 2)->nullable()->after('price');
-            $table->decimal('weight', 8, 2)->nullable()->after('discount_price');
-            $table->string('barcode')->nullable()->after('weight');
-            $table->boolean('status')->default(true)->after('barcode');
+            // Add missing columns only if they don't exist
+            if (!Schema::hasColumn('product_variants', 'sku')) {
+                $table->string('sku')->nullable()->after('product_id');
+            }
+            if (!Schema::hasColumn('product_variants', 'price')) {
+                $table->decimal('price', 10, 2)->nullable()->after('sku');
+            }
+            if (!Schema::hasColumn('product_variants', 'discount_price')) {
+                $table->decimal('discount_price', 10, 2)->nullable()->after('price');
+            }
+            if (!Schema::hasColumn('product_variants', 'weight')) {
+                $table->decimal('weight', 8, 2)->nullable()->after('discount_price');
+            }
+            if (!Schema::hasColumn('product_variants', 'barcode')) {
+                $table->string('barcode')->nullable()->after('weight');
+            }
+            if (!Schema::hasColumn('product_variants', 'status')) {
+                $table->boolean('status')->default(true)->after('barcode');
+            }
 
             // Drop existing 'color' and 'image' columns if they exist and are no longer needed
             // Based on ProductVariant model, these are not directly on the variant itself
