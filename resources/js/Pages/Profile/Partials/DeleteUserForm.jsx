@@ -1,4 +1,3 @@
-import DangerButton from '@/Components/DangerButton';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import Modal from '@/Components/Modal';
@@ -26,7 +25,7 @@ export default function DeleteUserForm({ className = '' }) {
         <section className={className}>
             <header>
                 <h2 className="font-serif text-xl text-rose-600">Zone de danger</h2>
-                <p className="mt-1 text-sm text-neutral-500">
+                <p className="mt-1 text-sm text-[#6B7280]">
                     La suppression de votre compte est irréversible. Toutes vos données seront effacées.
                 </p>
             </header>
@@ -39,9 +38,9 @@ export default function DeleteUserForm({ className = '' }) {
             </button>
 
             <Modal show={confirmingUserDeletion} onClose={() => setConfirmingUserDeletion(false)}>
-                <form onSubmit={deleteUser} className="p-8 bg-[#faf7f0]">
-                    <h2 className="font-serif text-2xl text-neutral-900">Confirmer la suppression</h2>
-                    <p className="mt-3 text-sm text-neutral-600">
+                <form onSubmit={deleteUser} className="p-8 bg-[#F8F7F4]">
+                    <h2 className="font-serif text-2xl text-[#111111]">Confirmer la suppression</h2>
+                    <p className="mt-3 text-sm text-[#6B7280]">
                         Veuillez entrer votre mot de passe pour confirmer que vous souhaitez supprimer votre compte 5witm.
                     </p>
 
@@ -49,7 +48,7 @@ export default function DeleteUserForm({ className = '' }) {
                         <TextInput
                             id="password"
                             type="password"
-                            className="mt-1 block w-full border-neutral-200 focus:border-rose-400 focus:ring-rose-400/20 rounded-xl"
+                            className="mt-1 block w-full border-[#E5E7EB] focus:border-[#C2A65A] focus:ring-[#C2A65A]/20 rounded-xl"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
                             placeholder="Mot de passe"
@@ -61,7 +60,7 @@ export default function DeleteUserForm({ className = '' }) {
                         <button
                             type="button"
                             onClick={() => setConfirmingUserDeletion(false)}
-                            className="px-6 py-2.5 rounded-xl text-xs font-bold text-neutral-500 hover:bg-neutral-100 transition"
+                            className="px-6 py-2.5 rounded-xl text-xs font-bold text-[#6B7280] hover:bg-[#F8F7F4] transition"
                         >
                             Annuler
                         </button>
