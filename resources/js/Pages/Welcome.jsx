@@ -5,7 +5,7 @@ import '../i18n';
 
 export default function Welcome({ products, categories }) {
     const { cartCount, flash, auth } = usePage().props;
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const [selectedVariantValuesPerProduct, setSelectedVariantValuesPerProduct] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
@@ -13,6 +13,7 @@ export default function Welcome({ products, categories }) {
     const [toastMessage, setToastMessage] = useState(null);
     const [isLoading] = useState(false);
     const [quickViewProduct, setQuickViewProduct] = useState(null);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const [wishlist, setWishlist] = useState(() => {
         try {
@@ -77,10 +78,6 @@ export default function Welcome({ products, categories }) {
         }));
     };
 
-    const changeLanguage = (lng) => {
-        i18n.changeLanguage(lng);
-    };
-
     const handleSmoothScroll = (e, targetId) => {
         e.preventDefault();
         const targetElement = document.getElementById(targetId);
@@ -140,7 +137,6 @@ export default function Welcome({ products, categories }) {
         };
     }, [selectedVariantValuesPerProduct]);
 
-    // Extraire les couleurs disponibles pour les swatches
     const getColorSwatches = useCallback((product) => {
         if (!product?.has_variants || !Array.isArray(product?.variant_types)) return [];
         const colorType = product.variant_types.find(vt =>
@@ -252,91 +248,225 @@ export default function Welcome({ products, categories }) {
                     }
                 `}</style>
 
+                {/* HEADER & NAVBAR */}
                 <header className="sticky top-0 z-40">
-                    <div className="bg-[#0F5C4D] text-white text-center py-2.5 px-4">
-                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em]">
+                    {/* Announcement Bar */}
+                    <div className="bg-[#0F5C4D] text-white text-center py-2 px-4 shadow-inner">
+                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.25em]">
                             Livraison gratuite partout au Maroc
                         </p>
                     </div>
 
-                    <nav className="bg-[#0A4338]/95 backdrop-blur-md border-b border-[#C2A65A]/20 px-4 sm:px-8 py-4 sm:py-5 flex justify-between items-center shadow-lg">
-                        <div className="flex items-center gap-4 sm:gap-8 min-w-0">
-                            <Link href="/" className="text-base sm:text-xl font-serif tracking-wide text-white flex items-center gap-1.5 shrink-0">
-                                <span>5witm<span className="text-[#C2A65A]">.</span></span>
-                            </Link>
-                            <div className="hidden md:flex items-center gap-6 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/60">
-                                <a href="#products-grid" onClick={(e) => handleSmoothScroll(e, 'products-grid')} className="text-white hover:text-[#C2A65A] transition">
-                                    {t('navbar.explore_products')}
-                                </a>
-                                <Link href="/about-us" className="text-white hover:text-[#C2A65A] transition">{t('navbar.about_us')}</Link>
+                    <nav className="bg-[#0A4338]/95 backdrop-blur-md border-b border-[#C2A65A]/20 px-4 sm:px-8 py-3.5 sm:py-4 shadow-lg transition-all">
+                        <div className="flex items-center justify-between max-w-7xl mx-auto">
+
+                            {/* Left: Hamburger (Mobile) + Desktop Links */}
+                            <div className="flex items-center gap-6">
+                                <button
+                                    onClick={() => setMobileMenuOpen(true)}
+                                    className="md:hidden text-white hover:text-[#C2A65A] p-2 -ml-2 transition-colors focus:outline-none"
+                                    aria-label="Open Menu"
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                    </svg>
+                                </button>
+
+                                <div className="hidden md:flex items-center gap-6 text-[11px] font-semibold uppercase tracking-[0.15em]">
+                                    <a href="#products-grid" onClick={(e) => handleSmoothScroll(e, 'products-grid')} className="text-white/80 hover:text-[#C2A65A] transition">
+                                        {t('navbar.explore_products')}
+                                    </a>
+                                    <Link href="/about-us" className="text-white/80 hover:text-[#C2A65A] transition">
+                                        {t('navbar.about_us')}
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Center: Brand Logo */}
+                            <div className="flex-1 flex justify-center text-center">
+                                <Link href="/" className="text-xl sm:text-2xl font-serif tracking-widest text-white hover:opacity-90 transition">
+                                    5witm<span className="text-[#C2A65A]">.</span>
+                                </Link>
+                            </div>
+
+                            {/* Right Section: Actions & Desktop Auth */}
+                            <div className="flex items-center gap-3 sm:gap-5 justify-end">
+                                {/* Desktop Auth Links */}
+                                <div className="hidden md:flex items-center gap-4 text-xs font-medium text-white/80">
+                                    {!auth?.user ? (
+                                        <Link href="/login" className="hover:text-[#C2A65A] transition font-semibold text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                                            <svg className="w-4 h-4 text-[#C2A65A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                            </svg>
+                                            {t('navbar.login')}
+                                        </Link>
+                                    ) : (
+                                        <div className="flex items-center gap-4">
+                                            {(auth.user && (auth.user.is_admin == 1 || auth.user.is_admin === true)) && (
+                                                <Link href="/admin/products" className="bg-[#C2A65A]/10 text-[#C2A65A] px-3 py-1.5 rounded-lg hover:bg-[#C2A65A]/20 transition font-bold border border-[#C2A65A]/30 text-xs">
+                                                    {t('navbar.admin_space')}
+                                                </Link>
+                                            )}
+                                            <Link href="/profile" className="hover:text-[#C2A65A] transition font-semibold text-[11px] uppercase tracking-wider">
+                                                {t('navbar.my_profile')}
+                                            </Link>
+                                            <Link href="/orders" className="hover:text-[#C2A65A] transition font-semibold text-[11px] uppercase tracking-wider">
+                                                {t('navbar.my_orders')}
+                                            </Link>
+                                            <button
+                                                onClick={() => router.post('/logout')}
+                                                className="text-white/50 hover:text-rose-400 font-bold text-xs cursor-pointer transition"
+                                            >
+                                                {t('navbar.logout')}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Cart Icon (Mobile & Desktop) */}
+                                <Link
+                                    href="/cart"
+                                    className="bg-[#0F5C4D] hover:bg-[#2D7A69] text-white px-3 sm:px-4 py-2 rounded-xl font-bold flex items-center gap-2 transition shadow-md active:scale-95 border border-[#C2A65A]/20"
+                                >
+                                    <svg className="w-5 h-5 text-[#C2A65A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                    </svg>
+                                    <span className="hidden sm:inline text-xs uppercase tracking-wider font-semibold">Panier</span>
+                                    <span className="bg-[#C2A65A] text-[#0A4338] text-[10px] font-black px-2 py-0.5 rounded-full min-w-[20px] text-center shadow-sm">
+                                        {cartCount || 0}
+                                    </span>
+                                </Link>
                             </div>
                         </div>
-
-                        <div className="flex items-center gap-2">
-                            <button onClick={() => changeLanguage('fr')} className={`text-xs font-semibold ${i18n.language === 'fr' ? 'text-[#C2A65A] font-bold' : 'text-white/50'} hover:text-[#C2A65A] transition`}>
-                                FR
-                            </button>
-                            <span className="text-white/30">|</span>
-                            <button onClick={() => changeLanguage('ar')} className={`text-xs font-semibold ${i18n.language === 'ar' ? 'text-[#CA65A] font-bold' : 'text-white/50'} hover:text-[#C2A65A] transition`}>
-                                AR
-                            </button>
-                        </div>
-
-                        <div className="flex items-center gap-2 sm:gap-5 text-xs font-medium text-white/60 min-w-0">
-                            {!auth?.user ? (
-                                <Link href="/login" className="hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs px-1 flex items-center gap-1.5">
-                                    <svg className="w-3.5 h-3.5 text-[#C2A65A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                    </svg>
-                                    <span>{t('navbar.login')}</span>
-                                </Link>
-                            ) : (
-                                <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-                                    {(auth.user && (auth.user.is_admin == 1 || auth.user.is_admin === true)) && (
-                                        <Link href="/admin/products" className="bg-[#C2A65A]/10 text-[#C2A65A] px-2 sm:px-3 py-1.5 rounded-lg hover:bg-[#C2A65A]/20 transition font-bold border border-[#C2A65A]/30 text-[10px] sm:text-xs whitespace-nowrap">
-                                            {t('navbar.admin_space')}
-                                        </Link>
-                                    )}
-                                    <Link href="/profile" className="hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs whitespace-nowrap px-0.5">
-                                        {t('navbar.my_profile')}
-                                    </Link>
-                                    <Link href="/orders" className="hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs whitespace-nowrap px-0.5">
-                                        {t('navbar.my_orders')}
-                                    </Link>
-                                    <div className="hidden sm:block h-4 w-px bg-white/20 shrink-0" />
-                                    <span className="hidden sm:inline-flex items-center gap-1 text-white font-bold max-w-[100px] truncate">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-[#C2A65A] shrink-0"></span>
-                                        {auth.user.name.split(' ')[0]}
-                                    </span>
-                                    <button
-                                        onClick={() => router.post('/logout')}
-                                        className="text-white/50 hover:text-red-400 font-bold text-[10px] sm:text-xs bg-[#0A4338] sm:bg-transparent px-2 py-1 sm:p-0 rounded-lg border border-white/15 sm:border-none cursor-pointer text-left transition"
-                                    >
-                                        {t('navbar.logout')}
-                                    </button>
-                                </div>
-                            )}
-
-                            <Link href="/cart" className="bg-[#0F5C4D] hover:bg-[#2D7A69] text-white px-2.5 sm:px-4 py-2 rounded-xl font-bold relative flex items-center gap-1.5 transition shadow-sm shrink-0 active:scale-98">
-                                <span>Panier</span>
-                                <span className="bg-[#0A4338] text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">
-                                    {cartCount || 0}
-                                </span>
-                            </Link>
-                        </div>
                     </nav>
+
+                    {/* Mobile Drawer (Slide-Over Navigation) */}
+                    {mobileMenuOpen && (
+                        <div className="fixed inset-0 z-50 md:hidden flex">
+                            {/* Backdrop */}
+                            <div
+                                className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
+                                onClick={() => setMobileMenuOpen(false)}
+                            />
+
+                            {/* Drawer Panel */}
+                            <div className="relative w-4/5 max-w-xs bg-[#0A4338] text-white h-full shadow-2xl flex flex-col justify-between z-10 border-r border-[#C2A65A]/20 p-6 overflow-y-auto animate-fade-in-up">
+                                <div>
+                                    {/* Drawer Header */}
+                                    <div className="flex items-center justify-between pb-6 border-b border-[#C2A65A]/20">
+                                        <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-xl font-serif tracking-widest text-white">
+                                            5witm<span className="text-[#C2A65A]">.</span>
+                                        </Link>
+                                        <button
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="p-2 text-white/70 hover:text-white rounded-lg transition"
+                                        >
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    {/* Navigation Links */}
+                                    <div className="mt-6 flex flex-col gap-4">
+                                        <a
+                                            href="#products-grid"
+                                            onClick={(e) => { handleSmoothScroll(e, 'products-grid'); setMobileMenuOpen(false); }}
+                                            className="text-white/90 hover:text-[#C2A65A] transition text-xs font-bold uppercase tracking-widest py-2 border-b border-white/5 flex items-center justify-between"
+                                        >
+                                            <span>{t('navbar.explore_products')}</span>
+                                            <span className="text-[#C2A65A]">→</span>
+                                        </a>
+                                        <Link
+                                            href="/about-us"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="text-white/90 hover:text-[#C2A65A] transition text-xs font-bold uppercase tracking-widest py-2 border-b border-white/5 flex items-center justify-between"
+                                        >
+                                            <span>{t('navbar.about_us')}</span>
+                                            <span className="text-[#C2A65A]">→</span>
+                                        </Link>
+                                    </div>
+
+                                    {/* User Auth Section inside Drawer */}
+                                    <div className="mt-8 pt-6 border-t border-[#C2A65A]/20">
+                                        {auth?.user ? (
+                                            <div className="flex flex-col gap-3">
+                                                <div className="flex items-center gap-2 mb-2 bg-[#0F5C4D] p-3 rounded-xl border border-[#C2A65A]/20">
+                                                    <div className="w-8 h-8 rounded-full bg-[#C2A65A] text-[#0A4338] font-bold flex items-center justify-center text-xs">
+                                                        {auth.user.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-xs font-bold text-white truncate">{auth.user.name}</p>
+                                                        <p className="text-[10px] text-white/60 truncate">{auth.user.email}</p>
+                                                    </div>
+                                                </div>
+
+                                                {(auth.user.is_admin == 1 || auth.user.is_admin === true) && (
+                                                    <Link
+                                                        href="/admin/products"
+                                                        onClick={() => setMobileMenuOpen(false)}
+                                                        className="bg-[#C2A65A]/10 text-[#C2A65A] px-4 py-2.5 rounded-xl transition font-bold border border-[#C2A65A]/30 text-xs text-center"
+                                                    >
+                                                        {t('navbar.admin_space')}
+                                                    </Link>
+                                                )}
+
+                                                <Link
+                                                    href="/profile"
+                                                    onClick={() => setMobileMenuOpen(false)}
+                                                    className="text-xs font-medium text-white/80 hover:text-[#C2A65A] py-2 transition flex items-center gap-2"
+                                                >
+                                                    <svg className="w-4 h-4 text-[#C2A65A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                                                    {t('navbar.my_profile')}
+                                                </Link>
+
+                                                <Link
+                                                    href="/orders"
+                                                    onClick={() => setMobileMenuOpen(false)}
+                                                    className="text-xs font-medium text-white/80 hover:text-[#C2A65A] py-2 transition flex items-center gap-2"
+                                                >
+                                                    <svg className="w-4 h-4 text-[#C2A65A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.75 7.5h16.5l-1.5-4.5H5.25l-1.5 4.5z" /></svg>
+                                                    {t('navbar.my_orders')}
+                                                </Link>
+
+                                                <button
+                                                    onClick={() => { setMobileMenuOpen(false); router.post('/logout'); }}
+                                                    className="mt-4 w-full py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold text-xs rounded-xl border border-rose-500/20 transition text-center"
+                                                >
+                                                    {t('navbar.logout')}
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <Link
+                                                href="/login"
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className="w-full py-3 bg-[#C2A65A] text-[#0A4338] font-bold text-xs rounded-xl transition text-center uppercase tracking-widest block shadow-lg"
+                                            >
+                                                {t('navbar.login')}
+                                            </Link>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Drawer Footer */}
+                                <div className="pt-6 border-t border-white/10 text-center">
+                                    <p className="text-[10px] text-white/50">© 5witm. All rights reserved.</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </header>
 
                 <main className="w-full">
+                    {/* Hero Section */}
                     <div
                         className="relative bg-cover bg-center bg-no-repeat text-center flex flex-col items-center justify-center px-4 sm:px-6 py-20 sm:py-28 overflow-hidden"
                         style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
                     >
-                        {/* Box m-floutya l-ktaba wst منها */}
                         <div className="relative flex flex-col items-center bg-[#0A4338]/50 backdrop-blur-md border border-[#C2A65A]/30 p-8 sm:p-12 rounded-3xl max-w-4xl mx-4 shadow-2xl">
-        <span className="text-[10px] sm:text-xs font-semibold text-[#C2A65A] uppercase tracking-[0.35em]">
-            Collection Exclusive
-        </span>
+                            <span className="text-[10px] sm:text-xs font-semibold text-[#C2A65A] uppercase tracking-[0.35em]">
+                                Collection Exclusive
+                            </span>
                             <div className="mt-4 mb-5 h-px w-16 bg-[#C2A65A]" />
 
                             <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl text-white max-w-3xl leading-[1.15] text-balance">
@@ -357,6 +487,7 @@ export default function Welcome({ products, categories }) {
                         </div>
                     </div>
 
+                    {/* Marquee Features */}
                     <div className="bg-[#0F5C4D] text-white overflow-hidden py-3.5 border-y border-[#0A4338]/30">
                         <div className="marquee-track">
                             {[0, 1].map((loop) => (
@@ -392,7 +523,8 @@ export default function Welcome({ products, categories }) {
                         </div>
                     </div>
 
-                    <div className="w-full px-4 sm:px-6 md:px-14 py-8 sm:py-12">
+                    {/* Main Content Area */}
+                    <div className="w-full px-4 sm:px-6 md:px-14 py-8 sm:py-12 max-w-7xl mx-auto">
                         {flash && (flash.success || flash.error || flash.warning) && (
                             <div className={`mb-8 p-4 rounded-xl text-xs font-semibold border ${
                                 flash.success ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
@@ -435,6 +567,7 @@ export default function Welcome({ products, categories }) {
                             </div>
                         </div>
 
+                        {/* PRODUCT GRID */}
                         {isLoading ? (
                             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
                                 {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
@@ -645,6 +778,7 @@ export default function Welcome({ products, categories }) {
                 </main>
             </div>
 
+            {/* TRUST & FOOTER SECTION */}
             <section id="trust-section" className="bg-[#0A4338] text-white mt-16 sm:mt-24">
                 <div className="border-b border-[#C2A65A]/15">
                     <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">

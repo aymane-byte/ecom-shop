@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import '../../i18n';
@@ -7,6 +7,7 @@ export default function Invoice() {
     const { t } = useTranslation();
     const { order: rawOrder, auth } = usePage().props;
     const order = rawOrder?.data || rawOrder;
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     if (!order) {
         return (
@@ -43,22 +44,68 @@ export default function Invoice() {
                     </p>
                 </div>
 
-                <nav className="bg-[#0A4338]/95 backdrop-blur-md border-b border-[#C2A65A]/20 px-4 sm:px-8 py-4 sm:py-5 flex justify-between items-center shadow-lg">
-                    <Link href="/" className="text-base sm:text-xl font-serif tracking-wide text-white flex items-center gap-1.5 shrink-0">
-                        <span>5witm<span className="text-[#C2A65A]">.</span></span>
-                    </Link>
+                <nav className="bg-[#0A4338]/95 backdrop-blur-md border-b border-[#C2A65A]/20 px-4 sm:px-8 py-4 sm:py-5 shadow-lg">
+                    <div className="flex items-center justify-between relative">
+                        <div className="flex items-center gap-4 min-w-0 flex-1">
+                            <button
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                className="md:hidden text-white p-1.5 hover:text-[#C2A65A] transition shrink-0"
+                                aria-label="Menu"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                    {mobileMenuOpen ? (
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    ) : (
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                    )}
+                                </svg>
+                            </button>
+                        </div>
 
-                    <div className="flex items-center gap-2 sm:gap-5 text-xs font-medium text-white/60 min-w-0">
-                        <Link href="/orders" className="hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs">
-                            {t('navbar.my_orders', 'Mes commandes')}
-                        </Link>
-                        <Link href="/about-us" className="hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs">
-                            {t('navbar.about_us', 'À propos')}
-                        </Link>
-                        <Link href="/" className="bg-[#0F5C4D] hover:bg-[#2D7A69] text-white px-2.5 sm:px-4 py-2 rounded-xl font-bold transition shadow-sm shrink-0">
-                            {t('navbar.explore_products', 'Boutique')}
-                        </Link>
+                        <div className="flex-1 flex justify-center">
+                            <Link href="/" className="text-base sm:text-xl font-serif tracking-wide text-white flex items-center gap-1.5 shrink-0">
+                                <span>5witm<span className="text-[#C2A65A]">.</span></span>
+                            </Link>
+                        </div>
+
+                        <div className="hidden md:flex items-center gap-2 sm:gap-5 text-xs font-medium text-white/60 min-w-0 flex-1 justify-end">
+                            <Link href="/orders" className="hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs">
+                                {t('navbar.my_orders', 'Mes commandes')}
+                            </Link>
+                            <Link href="/about-us" className="hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs">
+                                {t('navbar.about_us', 'À propos')}
+                            </Link>
+                            <Link href="/" className="bg-[#0F5C4D] hover:bg-[#2D7A69] text-white px-2.5 sm:px-4 py-2 rounded-xl font-bold transition shadow-sm shrink-0">
+                                {t('navbar.explore_products', 'Boutique')}
+                            </Link>
+                        </div>
                     </div>
+
+                    {mobileMenuOpen && (
+                        <div className="md:hidden mt-4 pt-4 border-t border-[#C2A65A]/20 flex flex-col gap-4">
+                            <Link
+                                href="/orders"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="text-white hover:text-[#C2A65A] transition text-sm font-semibold uppercase tracking-[0.15em] py-1"
+                            >
+                                {t('navbar.my_orders', 'Mes commandes')}
+                            </Link>
+                            <Link
+                                href="/about-us"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="text-white hover:text-[#C2A65A] transition text-sm font-semibold uppercase tracking-[0.15em] py-1"
+                            >
+                                {t('navbar.about_us', 'À propos')}
+                            </Link>
+                            <Link
+                                href="/"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="bg-[#0F5C4D] text-white px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-[0.15em] text-center"
+                            >
+                                {t('navbar.explore_products', 'Boutique')}
+                            </Link>
+                        </div>
+                    )}
                 </nav>
             </header>
 
