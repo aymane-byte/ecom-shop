@@ -7,16 +7,32 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // 1. Page d'accueil publique
 Route::get('/', function () {
+    $products = Product::with([
+        'images',
+        'productVariants.variantValues.variantType',
+        'variantTypes.variantValues.images'
+    ])->latest()->get();
+
+    // Extraire les catégories uniques des produits
+    $categories = $products->pluck('category')->filter()->unique()->values();
+
     return Inertia::render('Welcome', [
-        'products' => Product::with('images')->latest()->get(),
+        'products' => ProductResource::collection($products)->resolve(),
+        'categories' => $categories,
     ]);
 })->name('home');
+
+// About Us Page
+Route::get('/about-us', function () {
+    return Inertia::render('About/AboutUs');
+})->name('about-us');
 
 // 2. Auth Pure sur-mesure
 Route::middleware('guest')->group(function () {
@@ -36,8 +52,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/cart', [CartController::class, 'show'])->name('cart.index');
 Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
-Route::patch('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
-Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::patch('/cart/update/{cartKey}', [CartController::class, 'updateQuantity'])->name('cart.update'); // Changed {id} to {cartKey}
+Route::delete('/cart/remove/{cartKey}', [CartController::class, 'remove'])->name('cart.remove'); // Changed {id} to {cartKey}
 
 Route::get('/orders/{id}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');
 
@@ -75,6 +91,9 @@ Route::middleware(['auth'])->group(function () {
 
         // Supprimer une image de la galerie
         Route::delete('/product-images/{image}', [ProductController::class, 'deleteImage'])->name('product-images.destroy');
+        // Supprimer une variante de produit (now handled by ProductController@destroyVariant)
+        Route::delete('/product-variants/{variant}', [ProductController::class, 'destroyVariant'])->name('product-variants.destroy');
+
 
         // Gestion globale des Commandes
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');

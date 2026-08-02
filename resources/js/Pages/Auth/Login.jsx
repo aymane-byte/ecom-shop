@@ -1,7 +1,11 @@
 import React from 'react';
-import { Head, useForm, Link } from '@inertiajs/react';
+import {Head, useForm, Link, router} from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
+import Header from '../../Components/Header';
+import Footer from '../../Components/Footer';
 
 export default function Login() {
+    const { t } = useTranslation();
     const { data, setData, post, errors, processing } = useForm({
         email: '',
         password: '',
@@ -13,68 +17,71 @@ export default function Login() {
     };
 
     return (
-        <div className="bg-[#f8f9fa] min-h-screen flex items-center justify-center p-4 sm:p-6 antialiased font-sans">
-            <Head title="Connexion à votre compte - monocle." />
+        <div className="bg-[#F8F7F4] min-h-screen flex flex-col antialiased font-sans relative overflow-hidden">
+            <Header />
+            <Head title={t('login.page_title')} />
 
-            {/* 📱 RESPONSIVE WIDTH & PADDING FOR LOGIN CONTAINER */}
-            <div className="w-full max-w-md bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(194,166,90,0.08),transparent_60%)]" />
 
-                {/* Brand Header */}
+            <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
+                <div className="w-full max-w-md bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-[#E5E7EB] shadow-xl relative z-10">
+
                 <div className="text-center mb-6 sm:mb-8">
-                    <Link href="/" className="text-xl font-bold tracking-tight text-slate-900 inline-flex items-center gap-1.5 justify-center">
-                        <span className="bg-slate-900 text-white p-1.5 rounded-lg text-xs shadow-2xs">👓</span>
-                        <span>monocle<span className="text-blue-600 font-black">.</span></span>
+                    <Link href="/" className="text-xl font-serif tracking-wide text-[#0A4338] inline-flex items-center gap-1.5 justify-center">
+                        <span>5witm<span className="text-[#C2A65A] font-black">.</span></span>
                     </Link>
-                    <p className="text-[11px] sm:text-xs text-slate-400 mt-2 font-medium px-2">Connectez-vous pour accéder à votre espace personnel et suivre vos commandes en toute simplicité.</p>
+                    <div className="mt-3 mb-4 h-px w-12 bg-[#C2A65A]/40 mx-auto" />
+                    <p className="text-[11px] sm:text-xs text-[#6B7280] mt-2 font-medium px-2">{t('login.description')}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
 
-                    {/* Adresse Email */}
                     <div>
-                        <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Adresse e-mail</label>
+                        <label className="block text-[10px] sm:text-xs font-bold uppercase text-[#6B7280] tracking-wide">{t('login.email_label')}</label>
                         <input
                             type="email"
                             value={data.email}
                             onChange={e => setData('email', e.target.value)}
-                            className="w-full mt-1.5 border border-slate-200 bg-[#fbfbfc] p-3 rounded-xl outline-none text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-slate-400 focus:bg-white transition"
-                            placeholder="Saisissez votre adresse e-mail"
+                            className="w-full mt-1.5 border border-[#E5E7EB] bg-[#F8F7F4] p-3 rounded-xl outline-none text-xs sm:text-sm font-semibold text-[#111111] placeholder-[#9CA3AF] focus:border-[#C2A65A] focus:bg-white focus:ring-2 focus:ring-[#C2A65A]/20 transition"
+                            placeholder={t('login.email_placeholder')}
                         />
                         {errors.email && <p className="text-rose-500 text-xs mt-1.5 font-medium">⚠️ {errors.email}</p>}
                     </div>
 
-                    {/* Mot de passe */}
                     <div>
                         <div className="flex justify-between items-center">
-                            <label className="block text-[10px] sm:text-xs font-bold uppercase text-slate-500 tracking-wide">Mot de passe</label>
+                            <label className="block text-[10px] sm:text-xs font-bold uppercase text-[#6B7280] tracking-wide">{t('login.password_label')}</label>
                         </div>
                         <input
                             type="password"
                             value={data.password}
                             onChange={e => setData('password', e.target.value)}
-                            className="w-full mt-1.5 border border-slate-200 bg-[#fbfbfc] p-3 rounded-xl outline-none text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-slate-400 focus:bg-white transition"
-                            placeholder="Entrez votre mot de passe"
+                            className="w-full mt-1.5 border border-[#E5E7EB] bg-[#F8F7F4] p-3 rounded-xl outline-none text-xs sm:text-sm font-semibold text-[#111111] placeholder-[#9CA3AF] focus:border-[#C2A65A] focus:bg-white focus:ring-2 focus:ring-[#C2A65A]/20 transition"
+                            placeholder={t('login.password_placeholder')}
                         />
                         {errors.password && <p className="text-rose-500 text-xs mt-1.5 font-medium">⚠️ {errors.password}</p>}
                     </div>
 
-                    {/* Submit Main Button Slate Style */}
                     <button
                         type="submit"
                         disabled={processing}
-                        className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 sm:py-3.5 rounded-xl transition shadow-xs mt-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-99 truncate"
+                        className="w-full bg-[#0A4338] hover:bg-[#C2A65A] hover:text-[#0A4338] text-white text-xs font-bold py-3 sm:py-3.5 rounded-xl transition shadow-md mt-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-98 uppercase tracking-wider"
                     >
-                        {processing ? 'Connexion en cours...' : 'Se connecter'}
+                        {processing ? t('login.connecting') : t('login.connect')}
                     </button>
                 </form>
 
-                {/* Footer Switch Link */}
-                <div className="text-center mt-6 pt-4 border-t border-slate-100">
-                    <Link href="/register" className="text-xs text-slate-400 hover:text-blue-600 font-semibold transition block">
-                        Pas encore de compte ? <span className="underline text-slate-600 hover:text-blue-600">Créer un compte</span>
+                <div className="text-center mt-6 pt-4 border-t border-[#E5E7EB]">
+                    <Link href="/register" className="text-xs text-[#6B7280] hover:text-[#0F5C4D] font-semibold transition block">
+                        {t('login.no_account_prefix')} <span className="underline text-[#111111] hover:text-[#0F5C4D]">{t('login.create_account')}</span>
+                    </Link>
+                    <Link href="/about-us" className="text-xs text-[#6B7280] hover:text-[#0F5C4D] font-semibold transition block mt-2">
+                        {t('navbar.about_us', 'À propos')}
                     </Link>
                 </div>
             </div>
+            </div>
+            <Footer />
         </div>
     );
 }

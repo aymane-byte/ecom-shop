@@ -25,8 +25,8 @@ export default function AdminLayout({ children }) {
 
             <div className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden">
                 <Link href="/admin" className="flex items-center gap-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-950 text-xs font-semibold text-white">M</span>
-                    <span className="text-sm font-semibold">monocle admin</span>
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-950 text-xs font-semibold text-white">3</span>
+                    <span className="text-sm font-semibold">5witm admin</span>
                 </Link>
                 <button
                     type="button"
@@ -48,9 +48,9 @@ export default function AdminLayout({ children }) {
 
             <aside className={`${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} fixed left-0 top-14 z-40 flex h-[calc(100vh-3.5rem)] w-64 flex-col border-r border-slate-200 bg-white p-4 transition-transform md:top-0 md:h-screen md:translate-x-0`}>
                 <div className="hidden items-center gap-2 border-b border-slate-200 pb-4 md:flex">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-sm font-semibold text-white">M</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-sm font-semibold text-white">3</span>
                     <div>
-                        <p className="text-sm font-semibold leading-none">monocle</p>
+                        <p className="text-sm font-semibold leading-none">5witm</p>
                         <p className="mt-1 text-[11px] text-slate-500">Espace admin</p>
                     </div>
                 </div>

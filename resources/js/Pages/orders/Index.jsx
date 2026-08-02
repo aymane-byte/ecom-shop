@@ -1,192 +1,283 @@
-import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
-export default function Index({ orders }) {
-    const ordersList = Array.isArray(orders) ? orders : [];
-    const sortedOrders = [...ordersList].sort((a, b) => b.id - a.id);
+const statusConfig = {
+    pending: { label: 'En attente', bg: 'bg-[#C2A65A]/10', text: 'text-[#C2A65A]', border: 'border-[#C2A65A]/30', dot: 'bg-[#C2A65A]' },
+    processing: { label: 'En traitement', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: 'bg-blue-500' },
+    shipped: { label: 'Expédiée', bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', dot: 'bg-indigo-500' },
+    delivered: { label: 'Livrée', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-500' },
+    cancelled: { label: 'Annulée', bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200', dot: 'bg-rose-500' },
+    returned: { label: 'Retournée', bg: 'bg-[#F8F7F4]', text: 'text-[#6B7280]', border: 'border-[#E5E7EB]', dot: 'bg-[#6B7280]' },
+};
 
-    const getOrderItems = (items) => {
-        if (!items) return [];
-        if (typeof items === 'object') {
-            return Array.isArray(items) ? items : Object.values(items);
-        }
-        try {
-            const parsed = JSON.parse(items);
-            return Array.isArray(parsed) ? parsed : Object.values(parsed);
-        } catch (e) {
-            return [];
-        }
+const getStatusConfig = (status) => statusConfig[status?.toLowerCase()] || statusConfig.pending;
+
+export default function Index() {
+    const { t, i18n } = useTranslation();
+    const { auth, orders: rawOrders } = usePage().props;
+    const orders = rawOrders?.data || rawOrders || [];
+
+    const changeLanguage = (lng) => {
+        i18n.changeLanguage(lng);
     };
 
-    // 🔥 🚀 LA FONCTION OPTIMISÉE: Permet d'imprimer une facture propre et sans arrière-plan !
-    const handleDownloadInvoice = (e, orderId) => {
-        e.preventDefault();
+    const [expandedOrderId, setExpandedOrderId] = useState(null);
+    const [filterStatus, setFilterStatus] = useState('all');
 
-        // 1. Suppression des doublons existants
-        const existingIframe = document.getElementById(`invoice-iframe-${orderId}`);
-        if (existingIframe) existingIframe.remove();
-
-        // 2. Création d'un iframe complètement masqué
-        const iframe = document.createElement('iframe');
-        iframe.id = `invoice-iframe-${orderId}`;
-        iframe.style.position = 'fixed';
-        iframe.style.right = '0';
-        iframe.style.bottom = '0';
-        iframe.style.width = '0px';
-        iframe.style.height = '0px';
-        iframe.style.border = 'none';
-
-        // Définition de la source de l'iframe vers la route de la facture
-        iframe.src = `/orders/${orderId}/invoice`;
-
-        // 3. Déclenchement de l'impression une fois le contenu entièrement chargé
-        iframe.onload = function() {
-            setTimeout(() => {
-                try {
-                    iframe.contentWindow.focus();
-                    iframe.contentWindow.print();
-                } catch (error) {
-                    console.error("Erreur d'impression:", error);
-                }
-            }, 300); // Délai optimisé pour éviter les impressions multiples
-        };
-
-        document.body.appendChild(iframe);
+    const toggleExpand = (orderId) => {
+        setExpandedOrderId(prev => (prev === orderId ? null : orderId));
     };
+
+    const filteredOrders = filterStatus === 'all'
+        ? orders
+        : orders.filter(order => order.status?.toLowerCase() === filterStatus);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+    };
+
+    const formatPrice = (price) => `${Number(price || 0).toFixed(2)} DH`;
 
     return (
-        <div className="bg-[#f8fafc] min-h-screen text-slate-900 antialiased font-sans">
-            <Head title="Mon historique de commandes - monocle." />
-
-            {/* 📱 RESPONSIVE NAVIGATION PADDINGS */}
-            <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/50 px-4 sm:px-6 py-3.5 sm:py-4 flex justify-between items-center sticky top-0 z-50">
-                <Link href="/" className="text-base font-black tracking-tight text-slate-900 flex items-center gap-2">
-                    <span className="bg-slate-900 text-white w-6 h-6 rounded-lg text-xs flex items-center justify-center">👓</span>
-                    <span>monocle<span className="text-blue-600 font-black">.</span></span>
-                </Link>
-                <Link href="/" className="text-[10px] sm:text-[11px] font-bold text-slate-500 hover:text-slate-900 transition bg-slate-50 border border-slate-200/60 px-2.5 py-1.5 rounded-xl">
-                    ← Poursuivre mes achats
-                </Link>
-            </nav>
-
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-
-                {/* Responsive Header block */}
-                <div className="mb-6 sm:mb-10 pb-4 sm:pb-5 border-b border-slate-200/60">
-                    <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Votre espace client</span>
-                    <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 mt-1">Mon historique de commandes</h1>
-                    <p className="text-xs text-slate-400 mt-0.5">Consultez le statut de vos commandes et téléchargez vos factures en toute simplicité.</p>
+        <div className="bg-[#F8F7F4] min-h-screen text-[#111111] antialiased font-sans flex flex-col justify-between">
+            {/* HEADER */}
+            <header className="sticky top-0 z-50">
+                <div className="bg-[#0F5C4D] text-white text-center py-2.5 px-4">
+                    <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em]">
+                        Livraison gratuite partout au Maroc
+                    </p>
                 </div>
 
-                {sortedOrders.length === 0 ? (
-                    <div className="bg-white p-8 sm:p-12 rounded-2xl border border-slate-200/60 text-center shadow-2xs">
-                        <p className="text-slate-400 text-xs font-medium mb-4">Vous n'avez pas encore passé de commande.</p>
-                        <Link href="/" className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition inline-block">
-                            Découvrir nos produits
+                <nav className="bg-[#0A4338]/95 backdrop-blur-md border-b border-[#C2A65A]/20 px-4 sm:px-8 py-4 sm:py-5 flex justify-between items-center shadow-lg">
+                    <div className="flex items-center gap-4 sm:gap-8 min-w-0">
+                        <Link href="/" className="text-base sm:text-xl font-serif tracking-wide text-white flex items-center gap-1.5 shrink-0">
+                            <span>5witm<span className="text-[#C2A65A]">.</span></span>
+                        </Link>
+                        <div className="hidden md:flex items-center gap-6 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/60">
+                            <Link href="/" className="text-white hover:text-[#C2A65A] transition">{t('navbar.explore_products')}</Link>
+                            <Link href="/about-us" className="text-white hover:text-[#C2A65A] transition">{t('navbar.about_us')}</Link>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <button onClick={() => changeLanguage('fr')} className={`text-xs font-semibold ${i18n.language === 'fr' ? 'text-[#C2A65A] font-bold' : 'text-white/50'} hover:text-[#C2A65A] transition`}>FR</button>
+                        <span className="text-white/30">|</span>
+                        <button onClick={() => changeLanguage('ar')} className={`text-xs font-semibold ${i18n.language === 'ar' ? 'text-[#C2A65A] font-bold' : 'text-white/50'} hover:text-[#C2A65A] transition`}>AR</button>
+                    </div>
+
+                    <div className="flex items-center gap-2 sm:gap-5 text-xs font-medium text-white/60 min-w-0">
+                        {!auth?.user ? (
+                            <Link href="/login" className="hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs px-1 flex items-center gap-1.5">
+                                <svg className="w-3.5 h-3.5 text-[#C2A65A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                                <span>{t('navbar.login')}</span>
+                            </Link>
+                        ) : (
+                            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                                {(auth.user && (auth.user.is_admin == 1 || auth.user.is_admin === true)) && (
+                                    <Link href="/admin/products" className="bg-[#C2A65A]/10 text-[#C2A65A] px-2 sm:px-3 py-1.5 rounded-lg hover:bg-[#C2A65A]/20 transition font-bold border border-[#C2A65A]/30 text-[10px] sm:text-xs whitespace-nowrap">
+                                        {t('navbar.admin_space')}
+                                    </Link>
+                                )}
+                                <Link href="/profile" className="hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs whitespace-nowrap px-0.5">
+                                    {t('navbar.my_profile')}
+                                </Link>
+                                <Link href="/orders" className="text-[#C2A65A] hover:text-[#C2A65A] transition font-semibold text-[11px] sm:text-xs whitespace-nowrap px-0.5">
+                                    {t('navbar.my_orders')}
+                                </Link>
+                                <div className="hidden sm:block h-4 w-px bg-white/20 shrink-0" />
+                                <span className="hidden sm:inline-flex items-center gap-1 text-white font-bold max-w-[100px] truncate">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#C2A65A] shrink-0"></span>
+                                    {auth.user.name.split(' ')[0]}
+                                </span>
+                                <button onClick={() => router.post('/logout')} className="text-white/50 hover:text-red-400 font-bold text-[10px] sm:text-xs bg-[#0A4338] sm:bg-transparent px-2 py-1 sm:p-0 rounded-lg border border-white/20 sm:border-none cursor-pointer text-left transition">
+                                    {t('navbar.logout')}
+                                </button>
+                            </div>
+                        )}
+
+                        <Link href="/cart" className="bg-[#0F5C4D] hover:bg-[#2D7A69] text-white px-2.5 sm:px-4 py-2 rounded-xl font-bold relative flex items-center gap-1.5 transition shadow-sm shrink-0 active:scale-98">
+                            <span>Panier</span>
+                        </Link>
+                    </div>
+                </nav>
+            </header>
+
+            <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex-1">
+                <div className="mb-6 sm:mb-10 text-center sm:text-left">
+                    <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#0A4338] tracking-tight">{t('orders.my_orders_title', 'Mes commandes')}</h1>
+                    <p className="text-xs sm:text-sm text-[#6B7280] mt-2 font-medium">{t('orders.my_orders_subtitle', 'Suivez et gérez toutes vos commandes en un seul endroit.')}</p>
+                </div>
+
+                {/* STATUS FILTERS */}
+                <div className="flex flex-wrap gap-2 mb-6 sm:mb-8">
+                    <button
+                        onClick={() => setFilterStatus('all')}
+                        className={`px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider transition border ${
+                            filterStatus === 'all'
+                                ? 'bg-[#0A4338] text-[#C2A65A] border-[#0A4338] shadow-md'
+                                : 'bg-white text-neutral-600 border-neutral-200/80 hover:border-[#C2A65A] hover:text-[#0F5C4D]'
+                        }`}
+                    >
+                        Toutes
+                    </button>
+                    {Object.entries(statusConfig).map(([key, cfg]) => (
+                        <button
+                            key={key}
+                            onClick={() => setFilterStatus(key)}
+                            className={`px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider transition border ${
+                                filterStatus === key
+                                    ? 'bg-[#0A4338] text-[#C2A65A] border-[#0A4338] shadow-md'
+                                    : 'bg-white text-neutral-600 border-neutral-200/80 hover:border-[#C2A65A] hover:text-[#0F5C4D]'
+                            }`}
+                        >
+                            {cfg.label}
+                        </button>
+                    ))}
+                </div>
+
+                {filteredOrders.length === 0 ? (
+                    <div className="bg-white border border-neutral-200/80 rounded-2xl p-10 sm:p-16 text-center">
+                        <div className="w-16 h-16 mx-auto rounded-full bg-[#C2A65A]/10 border border-[#C2A65A]/30 flex items-center justify-center mb-4">
+                            <svg className="w-7 h-7 text-[#C2A65A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 11-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.057.435 1.119.993z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-sm font-bold text-[#111111] uppercase tracking-wide">{t('orders.no_orders_title', 'Aucune commande')}</h3>
+                        <p className="text-xs text-[#6B7280] mt-2 font-medium">{t('orders.no_orders_subtitle', 'Vous n\'avez pas encore passé de commande.')}</p>
+                        <Link href="/" className="mt-6 inline-flex items-center gap-2 bg-[#0A4338] hover:bg-[#C2A65A] hover:text-[#0A4338] text-white text-[11px] font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl transition">
+                            {t('orders.start_shopping', 'Découvrir la boutique')}
                         </Link>
                     </div>
                 ) : (
-                    /* 📱 RESPONSIVE GRID LAYOUT: Automatically collapses to 1 column on mobile devices */
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                        {sortedOrders.map((order) => {
-                            const items = getOrderItems(order.items);
-                            const priceRaw = order.total_price !== undefined ? order.total_price : order.total_amount;
-                            const totalPrice = isNaN(Number(priceRaw)) ? 0 : Number(priceRaw);
+                    <div className="space-y-3 sm:space-y-4">
+                        {filteredOrders.map((order) => {
+                            const status = getStatusConfig(order.status);
+                            const isExpanded = expandedOrderId === order.id;
+                            const items = order.items || order.order_items || [];
 
                             return (
-                                <div key={order.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col justify-between transition-all hover:border-slate-300 hover:shadow-xs">
-
-                                    <div className="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/30">
-                                        <div className="flex justify-between items-start gap-2 mb-3">
-                                            <div>
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Numéro de commande</p>
-                                                <p className="font-mono text-slate-900 font-bold text-xs tracking-tight">#{order.id}</p>
+                                <div key={order.id} className="bg-white border border-neutral-200/80 rounded-2xl overflow-hidden transition hover:shadow-md">
+                                    <button
+                                        onClick={() => toggleExpand(order.id)}
+                                        className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left hover:bg-neutral-50/50 transition"
+                                    >
+                                        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                                            <div className={`w-10 h-10 rounded-xl ${status.bg} ${status.border} border flex items-center justify-center shrink-0`}>
+                                                <span className={`w-2.5 h-2.5 rounded-full ${status.dot}`}></span>
                                             </div>
+                                            <div className="min-w-0">
+                                                <h3 className="text-xs sm:text-sm font-bold text-[#111111] truncate">
+                                                    {t('orders.order_number', 'Commande')} #{order.id?.toString().padStart(4, '0') || 'N/A'}
+                                                </h3>
+                                                <p className="text-[10px] sm:text-[11px] text-[#6B7280] font-medium mt-0.5">{formatDate(order.created_at || order.order_date)}</p>
+                                            </div>
+                                        </div>
 
-                                            <span className={`inline-flex items-center gap-1.5 font-bold px-2 py-0.5 rounded-md text-[8px] border shrink-0 ${
-                                                order.status === 'en_attente' ? 'bg-amber-50 border-amber-100 text-amber-700' :
-                                                    order.status === 'payé' ? 'bg-blue-50 border-blue-100 text-blue-700' :
-                                                        order.status === 'expédié' ? 'bg-indigo-50 border-indigo-100 text-indigo-700' :
-                                                            'bg-emerald-50 border-emerald-100 text-emerald-700'
-                                            }`}>
-                                                <span className={`w-1 h-1 rounded-full ${
-                                                    order.status === 'en_attente' ? 'bg-amber-500' :
-                                                        order.status === 'payé' ? 'bg-blue-500' :
-                                                            order.status === 'expédié' ? 'bg-indigo-500' : 'bg-emerald-500'
-                                                }`}></span>
-                                                <span className="uppercase tracking-wider text-[7px]">
-                                                    {order.status === 'en_attente' ? 'En attente de traitement' :
-                                                        order.status === 'payé' ? 'Payée' :
-                                                            order.status === 'expédié' ? 'Expédiée' :
-                                                                order.status === 'livré' ? 'Livrée' : order.status}
-                                                </span>
+                                        <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+                                            <div className="text-right hidden sm:block">
+                                                <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">{t('orders.total', 'Total')}</p>
+                                                <p className="text-sm font-black text-[#111111]">{formatPrice(order.total_amount || order.total)}</p>
+                                            </div>
+                                            <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border ${status.bg} ${status.text} ${status.border} uppercase tracking-wider`}>
+                                                {status.label}
                                             </span>
+                                            <svg className={`w-4 h-4 text-[#6B7280] transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                            </svg>
                                         </div>
+                                    </button>
 
-                                        <div className="flex justify-between items-end mt-4 gap-2">
-                                            <div>
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Date de commande</p>
-                                                <p className="text-slate-800 font-bold text-xs whitespace-nowrap">
-                                                    {new Date(order.created_at).toLocaleDateString('fr-FR', {
-                                                        year: 'numeric', month: 'short', day: 'numeric'
-                                                    })}
-                                                </p>
+                                    {isExpanded && (
+                                        <div className="border-t border-[#E5E7EB] p-4 sm:p-5 bg-[#F8F7F4]/30 space-y-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <div>
+                                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-[#6B7280] mb-2">{t('orders.shipping_address', 'Adresse de livraison')}</h4>
+                                                    <div className="text-xs font-semibold text-[#6B7280] space-y-0.5">
+                                                        <p>{order.customer_name || auth?.user?.name || '—'}</p>
+                                                        <p>{order.customer_phone || '—'}</p>
+                                                        <p>{order.customer_address || '—'}</p>
+                                                        <p>{order.customer_city || '—'}</p>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-[#6B7280] mb-2">{t('orders.payment_info', 'Paiement')}</h4>
+                                                    <div className="text-xs font-semibold text-[#6B7280] space-y-0.5">
+                                                        <p>{t('orders.method', 'Méthode')}: <span className="text-[#111111] font-bold">{order.payment_method || 'Paiement à la livraison'}</span></p>
+                                                        <p>{t('orders.status', 'Statut')}: <span className="text-[#111111] font-bold">{status.label}</span></p>
+                                                        <p>{t('orders.date', 'Date')}: <span className="text-[#111111] font-bold">{formatDate(order.created_at || order.order_date)}</span></p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Montant total</p>
-                                                <p className="text-base font-black text-slate-900 tracking-tight whitespace-nowrap">
-                                                        {totalPrice.toFixed(2)} DH
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-4">
-                                        <div>
-                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">Articles commandés ({items.length})</p>
-
-                                            {items.length === 0 ? (
-                                                <p className="text-xs text-slate-400 italic">Aucun article n'est listé pour cette commande.</p>
-                                            ) : (
-                                                /* Secure inner image list container */
-                                                <div className="flex flex-wrap gap-2 max-h-[110px] overflow-y-auto pr-1">
-                                                    {items.map((item, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className="relative w-10 h-10 bg-white border border-slate-200 rounded-lg flex items-center justify-center p-1 shrink-0 shadow-3xs"
-                                                            title={item.name || 'Produit'}
-                                                        >
-                                                            {item.image ? (
-                                                                <img src={item.image} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply" />
-                                                            ) : (
-                                                                <span className="text-[8px] text-slate-300 font-bold">Image produit</span>
-                                                            )}
-                                                            <span className="absolute -top-1 -right-1 bg-slate-900 text-white text-[7px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border border-white">
-                                                                {item.quantity || 1}
-                                                            </span>
-                                                        </div>
-                                                    ))}
+                                            {items.length > 0 && (
+                                                <div>
+                                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-[#6B7280] mb-2">{t('orders.items', 'Articles')}</h4>
+                                                    <div className="space-y-2">
+                                                        {items.map((item, idx) => (
+                                                            <div key={item.id || idx} className="flex items-center gap-3 bg-white border border-neutral-200/70 rounded-xl p-2.5">
+                                                                <div className="w-12 h-12 rounded-lg bg-neutral-50 border border-neutral-200/60 flex items-center justify-center overflow-hidden shrink-0">
+                                                                    {item.product?.image || item.image ? (
+                                                                        <img src={item.product?.image || item.image} alt={item.product?.name || item.name} className="max-w-full max-h-full object-contain" />
+                                                                    ) : (
+                                                                        <span className="text-[8px] text-neutral-300 font-bold">N/A</span>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <p className="text-xs font-bold text-[#111111] truncate">{item.product?.name || item.name || 'Produit'}</p>
+                                                                    <p className="text-[10px] text-[#6B7280] font-medium">Qté: {item.quantity || 1}</p>
+                                                                </div>
+                                                                <p className="text-xs font-black text-[#111111] shrink-0">{formatPrice(item.price || item.unit_price)}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             )}
-                                        </div>
 
-                                        <div className="pt-2">
-                                            <button
-                                                type="button"
-                                                onClick={(e) => handleDownloadInvoice(e, order.id)}
-                                                className="w-full text-center text-[10px] font-extrabold text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 px-3 py-2.5 rounded-xl border border-slate-200/70 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 select-none"
-                                            >
-                                                📑 Télécharger ma facture
-                                            </button>
+                                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-[#E5E7EB]">
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">{t('orders.total', 'Total')}:</p>
+                                                    <p className="text-base font-black text-[#0A4338]">{formatPrice(order.total_amount || order.total)}</p>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    {order.invoice_url && (
+                                                        <Link href={order.invoice_url} className="inline-flex items-center gap-1.5 bg-white border border-[#E5E7EB] hover:border-[#C2A65A] text-[#6B7280] hover:text-[#0F5C4D] text-[11px] font-bold uppercase tracking-wider px-4 py-2 rounded-xl transition">
+                                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                                            </svg>
+                                                            {t('orders.invoice', 'Facture')}
+                                                        </Link>
+                                                    )}
+                                                    <Link href={`/orders/${order.id}`} className="inline-flex items-center gap-1.5 bg-[#0A4338] hover:bg-[#C2A65A] hover:text-[#0A4338] text-white text-[11px] font-bold uppercase tracking-wider px-4 py-2 rounded-xl transition">
+                                                        {t('orders.view_details', 'Détails')}
+                                                    </Link>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-
+                                    )}
                                 </div>
                             );
                         })}
                     </div>
                 )}
             </main>
+
+            {/* FOOTER */}
+            <footer className="bg-[#0A4338] text-white mt-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                        <Link href="/" className="text-lg font-serif tracking-wide text-white">
+                            5witm<span className="text-[#C2A65A]">.</span>
+                        </Link>
+                        <p className="text-[11px] text-white/50 font-medium">© {new Date().getFullYear()} 5witm. Tous droits réservés.</p>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }

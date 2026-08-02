@@ -2,6 +2,7 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 function money(value) {
     return `${Number(value || 0).toFixed(2)} DH`;
@@ -19,6 +20,7 @@ function canonicalStatus(status) {
 }
 
 function StatusBadge({ status }) {
+    const { t } = useTranslation();
     const key = canonicalStatus(status);
     const styles = {
         en_attente: 'bg-yellow-100 text-yellow-900',
@@ -27,10 +29,10 @@ function StatusBadge({ status }) {
         'livr\u00e9': 'bg-slate-200 text-slate-800',
     };
     const labels = {
-        en_attente: 'En attente',
-        'pay\u00e9': 'Payée',
-        'exp\u00e9di\u00e9': 'Expédiée',
-        'livr\u00e9': 'Livrée',
+        en_attente: t('admin.dashboard.status_pending'),
+        'pay\u00e9': t('admin.dashboard.status_paid'),
+        'exp\u00e9di\u00e9': t('admin.dashboard.status_shipped'),
+        'livr\u00e9': t('admin.dashboard.status_delivered'),
     };
 
     return (
@@ -41,39 +43,40 @@ function StatusBadge({ status }) {
 }
 
 export default function Dashboard({ stats }) {
+    const { t } = useTranslation();
     const revenue = Number(stats.chiffre_affaires || 0);
     const chartData = [
-        { name: 'Jan', CA: revenue * 0.35 },
-        { name: 'Fev', CA: revenue * 0.5 },
-        { name: 'Mar', CA: revenue * 0.45 },
-        { name: 'Avr', CA: revenue * 0.7 },
-        { name: 'Mai', CA: revenue * 0.85 },
-        { name: 'Juin', CA: revenue },
+        { name: t('admin.dashboard.month_jan'), CA: revenue * 0.35 },
+        { name: t('admin.dashboard.month_feb'), CA: revenue * 0.5 },
+        { name: t('admin.dashboard.month_mar'), CA: revenue * 0.45 },
+        { name: t('admin.dashboard.month_apr'), CA: revenue * 0.7 },
+        { name: t('admin.dashboard.month_may'), CA: revenue * 0.85 },
+        { name: t('admin.dashboard.month_jun'), CA: revenue },
     ];
 
     const cards = [
-        { label: "Chiffre d'affaires total", value: money(stats.chiffre_affaires), detail: 'Total des commandes payées et traitées' },
-        { label: 'Nombre total de commandes', value: stats.total_orders, detail: 'Toutes catégories confondues' },
-        { label: 'Clients inscrits', value: stats.total_clients, detail: 'Nombre total de clients enregistrés' },
-        { label: 'Produits en stock faible', value: stats.out_of_stock, detail: 'Articles nécessitant un réapprovisionnement', danger: stats.out_of_stock > 0 },
+        { label: t('admin.dashboard.card_total_revenue_label'), value: money(stats.chiffre_affaires), detail: t('admin.dashboard.card_total_revenue_detail') },
+        { label: t('admin.dashboard.card_total_orders_label'), value: stats.total_orders, detail: t('admin.dashboard.card_total_orders_detail') },
+        { label: t('admin.dashboard.card_registered_clients_label'), value: stats.total_clients, detail: t('admin.dashboard.card_registered_clients_detail') },
+        { label: t('admin.dashboard.card_low_stock_products_label'), value: stats.out_of_stock, detail: t('admin.dashboard.card_low_stock_products_detail'), danger: stats.out_of_stock > 0 },
     ];
 
     return (
         <AdminLayout>
-            <Head title="Tableau de bord administrateur - monocle." />
+            <Head title={t('admin.dashboard.page_title')} />
 
             <div className="space-y-6">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                        <p className="text-sm font-medium text-slate-500">Aperçu général</p>
-                        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Tableau de bord administrateur</h1>
+                        <p className="text-sm font-medium text-slate-500">{t('admin.dashboard.overview_title')}</p>
+                        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">{t('admin.dashboard.main_title')}</h1>
                     </div>
                     <div className="flex flex-wrap gap-2">
                         <Link href="/admin/products/create" className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
-                            Ajouter un nouveau produit
+                            {t('admin.dashboard.add_new_product_button')}
                         </Link>
                         <Link href="/admin/orders" className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800">
-                            Gérer les commandes
+                            {t('admin.dashboard.manage_orders_button')}
                         </Link>
                     </div>
                 </div>
@@ -91,10 +94,10 @@ export default function Dashboard({ stats }) {
                 <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex flex-col gap-2 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h2 className="text-base font-semibold text-slate-950">Performance des ventes</h2>
-                            <p className="mt-1 text-sm text-slate-500">Évolution du chiffre d'affaires sur les six derniers mois.</p>
+                            <h2 className="text-base font-semibold text-slate-950">{t('admin.dashboard.sales_performance_title')}</h2>
+                            <p className="mt-1 text-sm text-slate-500">{t('admin.dashboard.sales_performance_description')}</p>
                         </div>
-                        <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">Période : 6 mois</span>
+                        <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">{t('admin.dashboard.period_label')}</span>
                     </div>
                     <div className="h-72 min-w-0 p-4">
                         <ResponsiveContainer width="100%" height="100%">
@@ -118,8 +121,8 @@ export default function Dashboard({ stats }) {
                 <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-12">
                     <section className="rounded-xl border border-slate-200 bg-white shadow-sm sm:col-span-2 xl:col-span-5">
                         <div className="flex items-center justify-between border-b border-slate-200 p-4">
-                            <h2 className="text-base font-semibold text-slate-950">Commandes récentes</h2>
-                            <Link href="/admin/orders" className="text-sm font-semibold text-slate-700 hover:text-slate-950">Voir toutes les commandes</Link>
+                            <h2 className="text-base font-semibold text-slate-950">{t('admin.dashboard.recent_orders_title')}</h2>
+                            <Link href="/admin/orders" className="text-sm font-semibold text-slate-700 hover:text-slate-950">{t('admin.dashboard.view_all_orders')}</Link>
                         </div>
                         <div className="divide-y divide-slate-100">
                             {(stats.recent_orders || []).map((order) => (
@@ -135,45 +138,45 @@ export default function Dashboard({ stats }) {
                                 </div>
                             ))}
                             {(stats.recent_orders || []).length === 0 && (
-                                <p className="p-6 text-sm text-slate-500">Aucune commande n'a été enregistrée récemment.</p>
+                                <p className="p-6 text-sm text-slate-500">{t('admin.dashboard.no_recent_orders')}</p>
                             )}
                         </div>
                     </section>
 
                     <section className="rounded-xl border border-slate-200 bg-white shadow-sm sm:col-span-2 xl:col-span-4">
                         <div className="border-b border-slate-200 p-4">
-                            <h2 className="text-base font-semibold text-slate-950">Produits les plus vendus</h2>
+                            <h2 className="text-base font-semibold text-slate-950">{t('admin.dashboard.top_selling_products_title')}</h2>
                         </div>
                         <div className="divide-y divide-slate-100">
                             {(stats.top_products || []).map((product) => (
                                 <div key={product.id || product.name} className="flex items-center justify-between gap-3 p-4">
                                     <div className="flex min-w-0 items-center gap-3">
                                         <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-1">
-                                            {product.image ? <img src={product.image} alt="" className="h-full w-full object-contain" /> : <span className="text-[10px] font-semibold text-slate-400">Image non disponible</span>}
+                                            {product.image ? <img src={product.image} alt="" className="h-full w-full object-contain" /> : <span className="text-[10px] font-semibold text-slate-400">{t('admin.dashboard.image_not_available')}</span>}
                                         </div>
                                         <div className="min-w-0">
                                             <p className="truncate font-medium text-slate-950">{product.name}</p>
                                             <p className="mt-1 text-sm text-slate-500">{money(product.price)}</p>
                                         </div>
                                     </div>
-                                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{product.total_sold} unités</span>
+                                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{t('admin.dashboard.units_sold', { count: product.total_sold })}</span>
                                 </div>
                             ))}
                             {(stats.top_products || []).length === 0 && (
-                                <p className="p-6 text-sm text-slate-500">Aucun produit populaire pour le moment.</p>
+                                <p className="p-6 text-sm text-slate-500">{t('admin.dashboard.no_popular_products')}</p>
                             )}
                         </div>
                     </section>
 
                     <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:col-span-2 xl:col-span-3">
-                        <h2 className="text-base font-semibold text-slate-950">Statistiques clés</h2>
+                        <h2 className="text-base font-semibold text-slate-950">{t('admin.dashboard.key_statistics_title')}</h2>
                         <div className="mt-4 space-y-3">
                             <div className="rounded-lg bg-slate-50 p-3">
-                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Panier moyen</p>
+                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t('admin.dashboard.average_cart_value')}</p>
                                 <p className="mt-2 text-xl font-semibold text-slate-950">{money(stats.panier_moyen)}</p>
                             </div>
                             <div className="rounded-lg bg-slate-50 p-3">
-                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Articles en rupture de stock</p>
+                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t('admin.dashboard.out_of_stock_items')}</p>
                                 <p className={`mt-2 text-xl font-semibold ${stats.out_of_stock > 0 ? 'text-red-700' : 'text-green-800'}`}>{stats.out_of_stock}</p>
                             </div>
                         </div>

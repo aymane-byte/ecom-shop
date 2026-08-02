@@ -3,204 +3,144 @@ import { Head, Link, usePage, router } from '@inertiajs/react';
 import DeleteUserForm from "./Partials/DeleteUserForm";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
+import { useTranslation } from 'react-i18next';
 
 export default function Edit({ mustVerifyEmail, status }) {
     const { cartCount, auth } = usePage().props;
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng) => {
+        i18n.changeLanguage(lng);
+    };
 
     return (
-        <div className="bg-[#f8f9fa] min-h-screen text-slate-900 antialiased font-sans flex flex-col justify-between">
-            <Head title="Gérer mon profil - monocle." />
+        <div className="bg-[#faf7f0] min-h-screen text-neutral-900 antialiased font-sans flex flex-col justify-between overflow-x-hidden">
+            <Head title="Mon Profil - 5witm." />
 
             <div>
-                {/* 🛒 NAVIGATION MINIMALIST RESPONSIVE */}
-                <nav className="bg-white/90 backdrop-blur-md border-b border-slate-200/60 px-4 sm:px-8 py-3.5 sm:py-4 flex justify-between items-center sticky top-0 z-50 shadow-2xs">
-                    <div className="flex items-center gap-4 sm:gap-8 min-w-0">
-                        <Link href="/" className="text-base sm:text-lg font-bold tracking-tight text-slate-900 flex items-center gap-1.5 shrink-0">
-                            <span className="bg-slate-900 text-white p-1.5 rounded-lg text-[10px] sm:text-xs">👓</span>
-                            <span>monocle<span className="text-blue-600 font-black">.</span></span>
-                        </Link>
-                        {/* Secondary Desktop links */}
-                        <div className="hidden md:flex items-center gap-5 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                            <Link href="/" className="text-slate-900 hover:text-slate-900 transition">Explorer nos produits</Link>
-                            <span className="cursor-not-allowed">Nos nouveautés</span>
-                            <span className="cursor-not-allowed">À propos de nous</span>
-                        </div>
+                {/* NAVIGATION (Copie conforme de Welcome) */}
+                <header className="sticky top-0 z-40">
+                    <div className="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-neutral-950 text-center py-2.5 px-4">
+                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em]">
+                            Livraison gratuite partout au Maroc
+                        </p>
                     </div>
 
-                    {/* Right controls area with strict responsive truncation */}
-                    <div className="flex items-center gap-2 sm:gap-5 text-xs font-medium text-slate-500 min-w-0">
-                        {!auth?.user ? (
-                            <Link href="/login" className="hover:text-slate-900 transition font-semibold text-[11px] sm:text-xs px-1">Se connecter</Link>
-                        ) : (
+                    <nav className="bg-neutral-950/95 backdrop-blur-md border-b border-amber-500/20 px-4 sm:px-8 py-4 sm:py-5 flex justify-between items-center shadow-lg">
+                        <div className="flex items-center gap-4 sm:gap-8 min-w-0">
+                            <Link href="/" className="text-base sm:text-xl font-serif tracking-wide text-amber-400 flex items-center gap-1.5 shrink-0">
+                                <span>5witm<span className="text-amber-300">.</span></span>
+                            </Link>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <button onClick={() => changeLanguage('fr')} className={`text-xs font-semibold ${i18n.language === 'fr' ? 'text-amber-400 font-bold' : 'text-neutral-500'} hover:text-amber-400 transition`}>
+                                FR
+                            </button>
+                            <span className="text-neutral-700">|</span>
+                            <button onClick={() => changeLanguage('ar')} className={`text-xs font-semibold ${i18n.language === 'ar' ? 'text-amber-400 font-bold' : 'text-neutral-500'} hover:text-amber-400 transition`}>
+                                AR
+                            </button>
+                        </div>
+
+                        <div className="flex items-center gap-2 sm:gap-5 text-xs font-medium text-neutral-400 min-w-0">
                             <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-                                {/* Admin Panel Link */}
                                 {(auth.user && (auth.user.is_admin == 1 || auth.user.is_admin === true)) && (
-                                    <Link href="/admin/products" className="bg-blue-50 text-blue-600 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-blue-100 transition font-bold border border-blue-100 text-[10px] sm:text-xs whitespace-nowrap">
-                                        Espace Admin
+                                    <Link href="/admin/products" className="bg-amber-500/10 text-amber-400 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-amber-500/20 transition font-bold border border-amber-500/30 text-[10px] sm:text-xs whitespace-nowrap">
+                                        {t('navbar.admin_space')}
                                     </Link>
                                 )}
-
-                                {/* Mon Profil */}
-                                <Link href="/profile" className="hover:text-slate-900 transition font-semibold text-[11px] sm:text-xs whitespace-nowrap px-0.5">
-                                    Mon Profil
+                                <Link href="/orders" className="hover:text-amber-400 transition font-semibold text-[11px] sm:text-xs whitespace-nowrap px-0.5">
+                                    {t('navbar.my_orders')}
                                 </Link>
-
-                                {/* Mes Commandes - Réservé uniquement aux connectés */}
-                                <Link href="/orders" className="hover:text-slate-900 transition font-semibold text-[11px] sm:text-xs whitespace-nowrap px-0.5">
-                                    <span className="hidden sm:inline">Mes </span>commandes
+                                <Link href="/about-us" className="hover:text-amber-400 transition font-semibold text-[11px] sm:text-xs whitespace-nowrap px-0.5">
+                                    {t('navbar.about_us')}
                                 </Link>
-
-                                <div className="hidden sm:block h-4 w-px bg-slate-200 shrink-0" />
-
-                                {/* User Name Badge (Hidden text on mobile to avoid layout crash) */}
-                                <span className="hidden sm:inline-flex items-center gap-1 text-slate-800 font-bold max-w-[100px] truncate">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                                    {auth.user.name.split(' ')[0]}
-                                </span>
-
-                                {/* Logout direct post method trigger to bypass proxy blocks */}
+                                <div className="hidden sm:block h-4 w-px bg-neutral-700 shrink-0" />
                                 <button
                                     onClick={() => router.post('/logout')}
-                                    className="text-slate-400 hover:text-red-500 font-bold text-[10px] sm:text-xs bg-slate-50 sm:bg-transparent px-2 py-1 sm:p-0 rounded-lg border border-slate-200/60 sm:border-none cursor-pointer text-left transition"
+                                    className="text-neutral-500 hover:text-red-400 font-bold text-[10px] sm:text-xs bg-neutral-900 sm:bg-transparent px-2 py-1 sm:p-0 rounded-lg border border-neutral-700 sm:border-none cursor-pointer text-left transition"
                                 >
-                                    Se déconnecter
+                                    {t('navbar.logout')}
                                 </button>
                             </div>
-                        )}
 
-                        {/* Panier Frame Trigger */}
-                        <Link href="/cart" className="bg-slate-900 hover:bg-slate-800 text-white px-2.5 sm:px-4 py-2 rounded-xl font-semibold relative flex items-center gap-1.5 transition shadow-sm shrink-0 active:scale-98">
-                            <span className="hidden sm:inline">Mon panier</span>
-                            <span className="sm:hidden">🛒</span>
-                            {cartCount > 0 ? (
-                                <span className="bg-blue-600 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md">
-                                    {cartCount}
+                            <Link href="/cart" className="bg-amber-500 hover:bg-amber-400 text-neutral-950 px-2.5 sm:px-4 py-2 rounded-xl font-bold relative flex items-center gap-1.5 transition shadow-sm shrink-0 active:scale-98">
+                                <span>Panier</span>
+                                <span className="bg-neutral-950 text-amber-400 text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">
+                                    {cartCount || 0}
                                 </span>
-                            ) : (
-                                <span className="text-slate-400 text-[9px] sm:text-[10px]">0 article(s)</span>
-                            )}
+                            </Link>
+                        </div>
+                    </nav>
+                </header>
+
+                <main className="max-w-4xl mx-auto space-y-8 p-6 sm:p-12">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-2 mb-4 border-b border-neutral-200 pb-6">
+                        <h2 className="font-serif text-3xl text-neutral-950">Gestion du compte</h2>
+                        <Link href="/" className="text-xs font-bold uppercase tracking-widest text-amber-600 hover:text-amber-700 transition">
+                            ← Retour à la collection
                         </Link>
                     </div>
-                </nav>
 
-                <main className="max-w-4xl mx-auto space-y-6 p-4 sm:p-8">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                        <h2 className="text-xl font-bold text-gray-800">Gestion de mon profil</h2>
-                        <Link href="/" className="text-sm font-semibold text-blue-600 hover:underline">
-                            ← Retourner à la boutique
-                        </Link>
-                    </div>
+                    <div className="space-y-8">
+                        <div className="bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200/80 shadow-sm">
+                            <UpdateProfileInformationForm
+                                mustVerifyEmail={mustVerifyEmail}
+                                status={status}
+                                className="max-w-xl"
+                            />
+                        </div>
 
-                    <div className="bg-white p-6 rounded-2xl border shadow-sm">
-                        <UpdateProfileInformationForm
-                            mustVerifyEmail={mustVerifyEmail}
-                            status={status}
-                            className="max-w-xl"
-                        />
-                    </div>
+                        <div className="bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200/80 shadow-sm">
+                            <UpdatePasswordForm className="max-w-xl" />
+                        </div>
 
-                    <div className="bg-white p-6 rounded-2xl border shadow-sm">
-                        <UpdatePasswordForm className="max-w-xl" />
-                    </div>
-
-                    <div className="bg-white p-6 rounded-2xl border shadow-sm">
-                        <DeleteUserForm className="max-w-xl" />
+                        <div className="bg-white p-6 sm:p-8 rounded-2xl border border-rose-100 shadow-sm">
+                            <DeleteUserForm className="max-w-xl" />
+                        </div>
                     </div>
                 </main>
             </div>
 
-            {/* 🏁 FOOTER E-COMMERCE PREMIUM */}
-            <footer className="bg-white border-t border-slate-200/80 mt-16 sm:mt-24">
-                {/* Section Engagement & Réassurance */}
-                <div className="border-b border-slate-100">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
-                        <div className="flex items-center justify-center md:justify-start gap-3.5">
-                            <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-base shrink-0">
-                                🚚
+            {/* FOOTER (Copie conforme de Welcome) */}
+            <footer className="bg-neutral-950 text-neutral-100 mt-16 sm:mt-24">
+                <div className="border-b border-amber-500/15">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
+                        {[
+                            { title: 'Livraison rapide', desc: 'Partout au Maroc en 24h-48h' },
+                            { title: 'Paiement à la livraison', desc: 'Payez après vérification' },
+                            { title: 'Retour facile', desc: 'Échange garanti sous 7 jours' },
+                            { title: 'Produits de qualité', desc: 'Sélection rigoureuse et vérifiée' },
+                        ].map((item) => (
+                            <div key={item.title} className="flex items-center justify-center md:justify-start gap-3.5">
+                                <div className="w-10 h-10 rounded-full border border-amber-500/40 flex items-center justify-center shrink-0 text-amber-400">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-bold text-neutral-100 uppercase tracking-wider">{item.title}</h4>
+                                    <p className="text-[11px] text-neutral-400 font-medium mt-0.5">{item.desc}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Livraison rapide partout au Maroc</h4>
-                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">Recevez vos produits chez vous, rapidement et en toute sécurité.</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-center md:justify-start gap-3.5">
-                            <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-base shrink-0">
-                                💵
-                            </div>
-                            <div>
-                                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Paiement à la livraison</h4>
-                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">Payez en toute confiance à la réception de votre commande.</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-center md:justify-start gap-3.5">
-                            <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-base shrink-0">
-                                ✨
-                            </div>
-                            <div>
-                                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Qualité supérieure garantie</h4>
-                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">Des produits soigneusement sélectionnés pour votre entière satisfaction.</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* Navigation & Branding Footer */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-12">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
-
-                        {/* Marque & Intro */}
-                        <div className="md:col-span-5 space-y-3.5">
-                            <Link href="/" className="text-lg font-bold tracking-tight text-slate-900 flex items-center gap-2">
-                                <span className="bg-slate-900 text-white w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-black">
-                                    M.
-                                </span>
-                                <span className="font-black tracking-tighter">monocle<span className="text-blue-600">.</span></span>
+                <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                        <div className="md:col-span-6 space-y-4">
+                            <Link href="/" className="text-xl font-serif tracking-wide text-amber-400 flex items-center gap-2">
+                                <span>5witm<span className="text-amber-300">.</span></span>
                             </Link>
-                            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-                                Votre partenaire de confiance pour des montures optiques de qualité exceptionnelle. Nous nous engageons à vous offrir un service client réactif et des prix compétitifs pour une satisfaction garantie.
+                            <p className="text-xs text-neutral-400 leading-relaxed max-w-sm">
+                                Votre boutique officielle pour des produits premium sélectionnés avec soin. Service client réactif et expérience d'achat 100% sécurisée.
                             </p>
                         </div>
-
-                        {/* Liens Rapides */}
-                        <div className="md:col-span-3 space-y-3">
-                            <h5 className="text-[11px] font-black uppercase tracking-widest text-slate-900">Liens utiles</h5>
-                            <ul className="space-y-2 text-xs font-semibold text-slate-500">
-                                <li>
-                                    <Link href="/" className="hover:text-slate-900 transition">Explorer nos produits</Link>
-                                </li>
-                                <li>
-                                    <Link href="/cart" className="hover:text-slate-900 transition">Accéder à mon panier</Link>
-                                </li>
-                                {auth?.user && (
-                                    <li>
-                                        <Link href="/orders" className="hover:text-slate-900 transition">Suivre mes commandes</Link>
-                                    </li>
-                                )}
-                            </ul>
-                        </div>
-
-                        {/* Informations Légales / Contact */}
-                        <div className="md:col-span-4 space-y-3">
-                            <h5 className="text-[11px] font-black uppercase tracking-widest text-slate-900">Besoin d'aide ?</h5>
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                Une question sur nos produits ou votre commande ? Notre service client est à votre disposition pour vous accompagner.
-                            </p>
-                            <div className="pt-1 text-xs font-bold text-slate-800">
-                                ✉️ support@monocle-optics.com
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {/* Copyright & Crédits */}
-                    <div className="mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-[11px] font-medium text-slate-400">
-                        <p>© {new Date().getFullYear()} monocle. Tous droits réservés.</p>
-                        <div className="flex items-center gap-4">
-                            <span className="hover:text-slate-600 transition cursor-pointer">Mentions légales</span>
-                            <span>•</span>
-                            <span className="hover:text-slate-600 transition cursor-pointer">Politique de confidentialité</span>
+                        <div className="md:col-span-6 flex flex-col md:items-end justify-center">
+                            <div className="text-xs font-bold text-neutral-100">support@5witm.com</div>
+                            <p className="text-[11px] text-neutral-500 mt-2">© {new Date().getFullYear()} 5witm. Tous droits réservés.</p>
                         </div>
                     </div>
                 </div>
