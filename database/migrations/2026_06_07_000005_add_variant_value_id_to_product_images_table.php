@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            $table->string('sku')->nullable()->after('product_id');
+        Schema::table('product_images', function (Blueprint $table) {
+            if (!Schema::hasColumn('product_images', 'variant_value_id')) {
+                $table->foreignId('variant_value_id')->nullable()->constrained('variant_values')->onDelete('cascade')->after('product_id');
+            }
         });
     }
 
@@ -21,8 +23,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropColumn('sku');
+        Schema::table('product_images', function (Blueprint $table) {
+            if (Schema::hasColumn('product_images', 'variant_value_id')) {
+                $table->dropForeign(['variant_value_id']);
+                $table->dropColumn('variant_value_id');
+            }
         });
     }
 };
