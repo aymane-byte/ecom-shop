@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import '../../i18n';
+import { trackPixelEvent } from '../../helpers/pixel';
 
 export default function Show({ product: rawProduct }) {
     const product = rawProduct?.data || rawProduct;
@@ -153,6 +154,19 @@ export default function Show({ product: rawProduct }) {
         }
     }, [selectedProductVariant, product, selectedVariantValues]);
 
+    // Track ViewContent Meta Pixel event when product is displayed
+    useEffect(() => {
+        if (product) {
+            trackPixelEvent('ViewContent', {
+                content_name: product.name,
+                content_ids: [product.id],
+                content_type: 'product',
+                value: activePrices.currentPrice,
+                currency: 'MAD',
+            });
+        }
+    }, [product, activePrices.currentPrice]);
+
     const [formData, setFormData] = useState({
         customer_name: '',
         customer_phone: '',
@@ -201,6 +215,16 @@ export default function Show({ product: rawProduct }) {
         if (product?.has_variants && selectedProductVariant) {
             dataToSend.product_variant_id = selectedProductVariant.id;
         }
+
+        // Track AddToCart Meta Pixel event
+        trackPixelEvent('AddToCart', {
+            content_name: product.name,
+            content_ids: [product.id],
+            content_type: 'product',
+            value: activePrices.currentPrice,
+            currency: 'MAD',
+        });
+
         router.post(route('cart.add', product.id), dataToSend, { preserveScroll: true });
     };
 

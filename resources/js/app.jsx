@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n'; // Import your i18n configuration
+import { trackPixelEvent } from './helpers/pixel'; // Import Meta Pixel helper
 
 const appName = import.meta.env.VITE_APP_NAME || '5witm';
 

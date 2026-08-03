@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import '../../i18n';
+import { trackPixelEvent } from '../../helpers/pixel';
 
 export default function Success() {
     const { t } = useTranslation();
@@ -53,6 +54,23 @@ export default function Success() {
             document.body.appendChild(script);
         }
     }, []);
+
+    // Track Purchase Meta Pixel event when order is successful
+    useEffect(() => {
+        if (order) {
+            const items = order.items || order.order_items || [];
+            const contentIds = items.map(item => item.product_id || item.product?.id).filter(Boolean);
+            const numItems = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+            trackPixelEvent('Purchase', {
+                content_ids: contentIds,
+                content_type: 'product',
+                value: totalAmount,
+                currency: 'MAD',
+                num_items: numItems,
+            });
+        }
+    }, [order, totalAmount]);
 
     const formatPrice = (price) => `${Number(price || 0).toFixed(2)} DH`;
     const formatDate = (dateString) => {
