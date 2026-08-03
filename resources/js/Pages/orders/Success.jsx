@@ -55,6 +55,16 @@ export default function Success() {
         }
     }, []);
 
+    const formatPrice = (price) => `${Number(price || 0).toFixed(2)} DH`;
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    };
+
+    const orderNumber = order?.id ? `#${String(order.id).padStart(4, '0')}` : '#0000';
+    const totalAmount = order?.total_amount || order?.total || 0;
+
     // Track Purchase Meta Pixel event when order is successful
     useEffect(() => {
         if (order) {
@@ -71,16 +81,6 @@ export default function Success() {
             });
         }
     }, [order, totalAmount]);
-
-    const formatPrice = (price) => `${Number(price || 0).toFixed(2)} DH`;
-    const formatDate = (dateString) => {
-        if (!dateString) return 'N/A';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-    };
-
-    const orderNumber = order?.id ? `#${String(order.id).padStart(4, '0')}` : '#0000';
-    const totalAmount = order?.total_amount || order?.total || 0;
     const estimatedDelivery = order?.estimated_delivery || new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' });
 
     return (
