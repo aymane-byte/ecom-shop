@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\User;
+use App\Services\MetaCapiService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,9 +14,9 @@ class OrderController extends Controller
     /**
      * Confirmation page after checkout
      */
-    public function success($id): Response
+    public function success($id, MetaCapiService $metaCapi): Response
     {
-        $order = Order::findOrFail($id);
+        $order = Order::with('orderItems')->findOrFail($id);
 
         /** @var User|null $user */
         $user = Auth::user();
@@ -29,6 +30,25 @@ class OrderController extends Controller
                 abort(403, 'Accès à la confirmation expiré.');
             }
         }
+
+        // --- Envoi de l'événement Purchase à Meta CAPI ---
+        $eventId = 'order_' . $order->id;
+
+        $metaCapi->sendEvent(
+            eventName: 'Purchase',
+            customData: [
+                'currency'     => 'MAD',
+                'value'        => (float) ($order->total_price ?? 0),
+                'content_type' => 'product',
+                'content_ids'  => collect($order->orderItems)->pluck('product_id')->filter()->values()->all(),
+                'num_items'    => collect($order->orderItems)->sum('quantity'),
+            ],
+            userData: [
+                'ph' => $order->customer_phone ? hash('sha256', trim($order->customer_phone)) : null,
+                'fn' => $order->customer_name ? hash('sha256', strtolower(trim($order->customer_name))) : null,
+            ],
+            eventId: $eventId
+        );
 
         return Inertia::render('orders/Success', [
             'order' => [
