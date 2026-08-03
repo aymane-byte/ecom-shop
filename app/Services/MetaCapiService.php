@@ -34,7 +34,6 @@ class MetaCapiService
                     'custom_data' => $customData,
                 ]
             ],
-            'test_event_code' => 'TEST99862', // <-- كود الاختبار ديالك فـ Meta
             'access_token' => $this->token,
         ];
 
