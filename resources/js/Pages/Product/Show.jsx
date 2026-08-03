@@ -235,10 +235,10 @@ export default function Show({ product: rawProduct }) {
     const isAddToCartDisabled = isOutOfStock || quantity === 0 || (product?.has_variants && !selectedProductVariant);
 
     return (
-        <div className="bg-[#F8F7F4] min-h-screen text-[#111111] antialiased font-sans selection:bg-[#C2A65A]/30 pb-20 lg:pb-0">
+        <div className="bg-[#F8F7F4] min-h-screen text-[#111111] antialiased font-sans selection:bg-[#C2A65A]/30 flex flex-col justify-between pb-20 lg:pb-0">
             <Head title={t('product.show.page_title', { productName: product?.name || 'Product' })} />
 
-            {/* HEADER & NAVBAR IDENTICAL TO WELCOME */}
+            {/* HEADER & NAVBAR */}
             <header className="sticky top-0 z-40">
                 {/* Announcement Bar */}
                 <div className="bg-[#0F5C4D] text-white text-center py-2 px-4 shadow-inner">
@@ -447,7 +447,8 @@ export default function Show({ product: rawProduct }) {
                 )}
             </header>
 
-            <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+            {/* MAIN CONTENT */}
+            <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 w-full">
                 <nav className="mb-4 sm:mb-8 flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-[#6B7280] tracking-wide uppercase">
                     <Link href="/" className="hover:text-[#0F5C4D] transition">{t('product.show.explore_products')}</Link>
                     <span>/</span>
@@ -672,6 +673,75 @@ export default function Show({ product: rawProduct }) {
                 </div>
             </main>
 
+            {/* DIRECT ORDER MODAL */}
+            {isOrderModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsOrderModalOpen(false)}>
+                    <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative" onClick={e => e.stopPropagation()}>
+                        <div className="flex justify-between items-center mb-6 border-b pb-4">
+                            <h3 className="font-serif text-lg font-bold text-[#111111]">Commander directement</h3>
+                            <button onClick={() => setIsOrderModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        <form onSubmit={handleDirectOrder} className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nom Complet</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.customer_name}
+                                    onChange={e => setFormData({ ...formData, customer_name: e.target.value })}
+                                    className="w-full bg-neutral-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-medium focus:outline-none focus:border-[#0F5C4D]"
+                                    placeholder="Ex: Mohamed Amine"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Téléphone</label>
+                                <input
+                                    type="tel"
+                                    required
+                                    value={formData.customer_phone}
+                                    onChange={e => setFormData({ ...formData, customer_phone: e.target.value })}
+                                    className="w-full bg-neutral-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-medium focus:outline-none focus:border-[#0F5C4D]"
+                                    placeholder="Ex: 0612345678"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Ville</label>
+                                <select
+                                    required
+                                    value={formData.customer_city}
+                                    onChange={e => setFormData({ ...formData, customer_city: e.target.value })}
+                                    className="w-full bg-neutral-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-medium focus:outline-none focus:border-[#0F5C4D]"
+                                >
+                                    <option value="">Sélectionner votre ville</option>
+                                    {marocCities.map(city => (
+                                        <option key={city} value={city}>{city}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Adresse de livraison</label>
+                                <textarea
+                                    required
+                                    rows="2"
+                                    value={formData.customer_address}
+                                    onChange={e => setFormData({ ...formData, customer_address: e.target.value })}
+                                    className="w-full bg-neutral-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-medium focus:outline-none focus:border-[#0F5C4D]"
+                                    placeholder="Quartier, rue, numéro d'appartement..."
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full py-3.5 bg-[#0F5C4D] hover:bg-[#0A4338] text-white font-black text-xs uppercase tracking-widest rounded-xl transition shadow-lg mt-4"
+                            >
+                                Confirmer la commande (Paiement à la livraison)
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             {/* STICKY BOTTOM BAR FOR MOBILE */}
             <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E5E7EB] p-3 shadow-lg flex items-center gap-2 sm:gap-4 lg:hidden">
                 <div className="flex-1 min-w-0 px-1">
@@ -693,255 +763,104 @@ export default function Show({ product: rawProduct }) {
                     type="button"
                     onClick={() => setIsOrderModalOpen(true)}
                     disabled={isAddToCartDisabled}
-                    className="px-4 py-3 bg-[#C2A65A] hover:bg-[#b5984a] text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-md transition active:scale-95 disabled:opacity-50"
+                    className="px-4 py-3 bg-[#C2A65A] hover:bg-[#b5984a] text-white rounded-xl font-black text-xs uppercase transition active:scale-95 disabled:opacity-50"
                 >
-                    ACHETER MAINTENANT
+                    Acheter
                 </button>
             </div>
 
-            {/* MODAL COMMANDE */}
-            {isOrderModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
-                    <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-[#E5E7EB] my-auto relative">
-                        {/* Header Modal */}
-                        <div className="px-5 py-4 border-b border-[#E5E7EB] flex items-center justify-between">
-                            <h3 className="text-base sm:text-lg font-bold text-[#111111]">
-                                Commande avec paiement à la livraison
-                            </h3>
-                            <button
-                                onClick={() => setIsOrderModalOpen(false)}
-                                className="text-[#6B7280] hover:text-[#111111] p-1 rounded-full hover:bg-neutral-100 transition"
-                            >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div className="p-5 space-y-5 max-h-[80vh] overflow-y-auto">
-                            {/* Product Item Card */}
-                            <div className="flex items-center gap-3 bg-neutral-50 p-2.5 rounded-xl border border-[#E5E7EB]">
-                                <div className="relative w-14 h-14 bg-white rounded-lg border border-[#E5E7EB] flex items-center justify-center shrink-0 overflow-hidden">
-                                    {activeImage ? (
-                                        <img src={activeImage} alt={product.name} className="w-full h-full object-contain p-1" />
-                                    ) : (
-                                        <div className="w-full h-full bg-neutral-200" />
-                                    )}
-                                    <span className="absolute -top-1 -right-1 bg-[#0F5C4D] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">
-                                        {quantity}
-                                    </span>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="text-xs sm:text-sm font-semibold text-[#111111] truncate">
-                                        {product?.name}
-                                        {selectedProductVariant && selectedProductVariant.variant_values && (
-                                            <span className="text-[#6B7280] font-normal"> ({selectedProductVariant.variant_values.map(vv => vv.value).join(' / ')})</span>
-                                        )}
-                                    </h4>
-                                </div>
-                                <div className="text-xs sm:text-sm font-bold text-[#111111]">
-                                    {formattedPrice(activePrices.currentPrice * quantity)}
-                                </div>
-                            </div>
-
-                            {/* Summary Table */}
-                            <div className="bg-neutral-100/70 rounded-xl p-3.5 space-y-2 text-xs text-[#6B7280] font-medium">
-                                <div className="flex justify-between items-center">
-                                    <span>Sous-total</span>
-                                    <span className="font-bold text-[#111111]">{formattedPrice(activePrices.currentPrice * quantity)}</span>
-                                </div>
-                                <div className="flex justify-between items-center border-b border-[#E5E7EB] pb-2">
-                                    <span>Livraison</span>
-                                    <span className="font-bold text-[#111111]">Gratuit</span>
-                                </div>
-                                <div className="flex justify-between items-center pt-1 text-sm font-bold text-[#0F5C4D]">
-                                    <span>Total</span>
-                                    <span>{formattedPrice(activePrices.currentPrice * quantity)}</span>
-                                </div>
-                            </div>
-
-                            {/* Delivery Options */}
-                            <div className="space-y-1.5">
-                                <label className="block text-xs font-bold text-[#111111]">Mode de livraison</label>
-                                <div className="border border-[#E5E7EB] rounded-xl p-3 flex items-center justify-between text-xs font-medium">
-                                    <div className="flex items-center gap-2.5">
-                                        <input type="radio" checked readOnly className="accent-[#0F5C4D] w-4 h-4 cursor-pointer" />
-                                        <span>Livraison gratuite</span>
-                                    </div>
-                                    <span className="font-bold text-[#111111]">Gratuit</span>
-                                </div>
-                            </div>
-
-                            {/* Order Form */}
-                            <form onSubmit={handleDirectOrder} className="space-y-3.5">
-                                <h4 className="text-xs sm:text-sm font-bold text-[#111111] text-center pt-2">
-                                    Insérez votre adresse de livraison
-                                </h4>
-
-                                <div>
-                                    <label className="block text-[11px] font-bold text-[#111111] mb-1">
-                                        Nom et prénom <span className="text-red-500">*</span>
-                                    </label>
-                                    <div className="flex border border-[#E5E7EB] rounded-xl overflow-hidden focus-within:border-[#0F5C4D] transition">
-                                        <div className="bg-neutral-100 px-3.5 flex items-center justify-center text-[#6B7280] border-r border-[#E5E7EB]">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                            </svg>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            required
-                                            placeholder="Nom et prénom"
-                                            className="w-full bg-white px-3 py-2.5 text-xs text-[#111111] focus:outline-none"
-                                            value={formData.customer_name}
-                                            onChange={e => setFormData({ ...formData, customer_name: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-[11px] font-bold text-[#111111] mb-1">
-                                        Téléphone <span className="text-red-500">*</span>
-                                    </label>
-                                    <div className="flex border border-[#E5E7EB] rounded-xl overflow-hidden focus-within:border-[#0F5C4D] transition">
-                                        <div className="bg-neutral-100 px-3.5 flex items-center justify-center text-[#6B7280] border-r border-[#E5E7EB]">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.828-1.015-5.183-3.37-6.198-6.198l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                                            </svg>
-                                        </div>
-                                        <input
-                                            type="tel"
-                                            required
-                                            placeholder="Téléphone"
-                                            className="w-full bg-white px-3 py-2.5 text-xs text-[#111111] focus:outline-none"
-                                            value={formData.customer_phone}
-                                            onChange={e => setFormData({ ...formData, customer_phone: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-[11px] font-bold text-[#111111] mb-1">
-                                        Adresse <span className="text-red-500">*</span>
-                                    </label>
-                                    <div className="flex border border-[#E5E7EB] rounded-xl overflow-hidden focus-within:border-[#0F5C4D] transition">
-                                        <div className="bg-neutral-100 px-3.5 flex items-center justify-center text-[#6B7280] border-r border-[#E5E7EB]">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                                            </svg>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            required
-                                            placeholder="Adresse"
-                                            className="w-full bg-white px-3 py-2.5 text-xs text-[#111111] focus:outline-none"
-                                            value={formData.customer_address}
-                                            onChange={e => setFormData({ ...formData, customer_address: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-[11px] font-bold text-[#111111] mb-1">
-                                        Ville <span className="text-red-500">*</span>
-                                    </label>
-                                    <div className="flex border border-[#E5E7EB] rounded-xl overflow-hidden focus-within:border-[#0F5C4D] transition">
-                                        <div className="bg-neutral-100 px-3.5 flex items-center justify-center text-[#6B7280] border-r border-[#E5E7EB]">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m-6-18h12a2.25 2.25 0 012.25 2.25v13.5A2.25 2.25 0 0119.5 21h-15a2.25 2.25 0 01-2.25-2.25V5.25A2.25 2.25 0 014.5 3z" />
-                                            </svg>
-                                        </div>
-                                        <select
-                                            required
-                                            className="w-full bg-white px-3 py-2.5 text-xs text-[#111111] focus:outline-none cursor-pointer"
-                                            value={formData.customer_city}
-                                            onChange={e => setFormData({ ...formData, customer_city: e.target.value })}
-                                        >
-                                            <option value="" disabled>Sélectionnez votre ville</option>
-                                            {marocCities.map(city => (
-                                                <option key={city} value={city}>{city}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={isAddToCartDisabled}
-                                    className={`w-full bg-[#0F5C4D] hover:bg-[#2D7A69] text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl shadow-md transition active:scale-98 cursor-pointer mt-4 ${
-                                        !isAddToCartDisabled ? '' : 'opacity-50 cursor-not-allowed'
-                                    }`}
-                                >
-                                    Valider la commande
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* FOOTER */}
-            <footer className="bg-[#0A4338] text-white mt-16 sm:mt-24">
+            {/* TRUST & FOOTER SECTION IDENTICAL TO WELCOME */}
+            <footer id="trust-section" className="bg-[#0A4338] text-white mt-16 sm:mt-24">
                 <div className="border-b border-[#C2A65A]/15">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
-                        <div className="flex items-center justify-center md:justify-start gap-3.5">
-                            <div className="w-10 h-10 rounded-full border border-[#C2A65A]/40 flex items-center justify-center shrink-0 text-[#C2A65A]">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                                </svg>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
+                        {[
+                            { title: 'Livraison rapide', desc: 'Partout au Maroc en 24h-48h' },
+                            { title: 'Paiement à la livraison', desc: 'Payez après vérification' },
+                            { title: 'Retour facile', desc: 'Échange garanti sous 7 jours' },
+                            { title: 'Produits de qualité', desc: 'Sélection rigoureuse et vérifiée' },
+                        ].map((item) => (
+                            <div key={item.title} className="flex items-center justify-center md:justify-start gap-3.5">
+                                <div className="w-10 h-10 rounded-full border border-[#C2A65A]/40 flex items-center justify-center shrink-0 text-[#C2A65A]">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">{item.title}</h4>
+                                    <p className="text-[11px] text-white/60 font-medium mt-0.5">{item.desc}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 className="text-xs font-bold text-white uppercase tracking-wider">{t('product.show.footer_fast_delivery_title')}</h4>
-                                <p className="text-[11px] text-white/60 font-medium mt-0.5">{t('product.show.footer_fast_delivery_description')}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-center md:justify-start gap-3.5">
-                            <div className="w-10 h-10 rounded-full border border-[#C2A65A]/40 flex items-center justify-center shrink-0 text-[#C2A65A]">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.06 60.06 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9c0 .621.504 1.125 1.125 1.125h6.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H3.375a1.125 1.125 0 00-1.125 1.125v.375m15.75 0v.375c0 .621-.504 1.125-1.125 1.125H9.75m4.5-9.75v.375c0 .621-.504 1.125-1.125 1.125H9.375c-.621 0-1.125-.504-1.125-1.125V4.5h6.75z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 className="text-xs font-bold text-white uppercase tracking-wider">{t('product.show.footer_cash_on_delivery_title')}</h4>
-                                <p className="text-[11px] text-white/60 font-medium mt-0.5">{t('product.show.footer_cash_on_delivery_description')}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-center md:justify-start gap-3.5">
-                            <div className="w-10 h-10 rounded-full border border-[#C2A65A]/40 flex items-center justify-center shrink-0 text-[#C2A65A]">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 className="text-xs font-bold text-white uppercase tracking-wider">{t('product.show.footer_quality_guaranteed_title')}</h4>
-                                <p className="text-[11px] text-white/60 font-medium mt-0.5">{t('product.show.footer_quality_guaranteed_description')}</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-16">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
-                        <div className="md:col-span-5 space-y-3.5">
+                        <div className="md:col-span-4 space-y-4">
                             <Link href="/" className="text-xl font-serif tracking-wide text-white flex items-center gap-2">
                                 <span>5witm<span className="text-[#C2A65A]">.</span></span>
                             </Link>
                             <p className="text-xs text-white/60 leading-relaxed max-w-sm">
-                                {t('product.show.footer_brand_description')}
+                                Votre boutique officielle pour des produits premium sélectionnés avec soin. Service client réactif et expérience d'achat 100% sécurisée.
                             </p>
                             <div className="pt-2 flex items-center gap-3">
-                                <a href="https://wa.me/" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#C2A65A] hover:text-[#0A4338] flex items-center justify-center text-white/70 transition" title="WhatsApp">
+                                <a href="https://wa.me/212754012300" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#C2A65A] hover:text-[#0A4338] flex items-center justify-center text-white/70 transition" title="WhatsApp">
                                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                                         <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
                                     </svg>
                                 </a>
-                                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#C2A65A] hover:text-[#0A4338] flex items-center justify-center text-white/70 transition" title="Facebook">
+                                <a href="https://www.facebook.com/profile.php?id=61592792846038&mibextid=rS40aB7S9Ucbxw6v" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#C2A65A] hover:text-[#0A4338] flex items-center justify-center text-white/70 transition" title="Facebook">
                                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                     </svg>
                                 </a>
+                                <a href="https://www.instagram.com/5witm/" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#C2A65A] hover:text-[#0A4338] flex items-center justify-center text-white/70 transition" title="Instagram">
+                                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                    </svg>
+                                </a>
+                                <a href="https://www.tiktok.com/@5witm?_r=1&_t=ZS-98YrYXCjT9w" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#C2A65A] hover:text-[#0A4338] flex items-center justify-center text-white/70 transition" title="TikTok">
+                                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.82.56-1.31 1.51-1.28 2.55.02.82.42 1.61 1.08 2.09.8.59 1.87.7 2.81.42.94-.27 1.71-1.02 1.98-1.96.22-.72.23-1.49.23-2.24V.02z"/>
+                                    </svg>
+                                </a>
                             </div>
+                        </div>
+
+                        <div className="md:col-span-2 space-y-3">
+                            <h5 className="text-[11px] font-bold uppercase tracking-widest text-[#C2A65A]">Navigation</h5>
+                            <ul className="space-y-2 text-xs font-semibold text-white/60">
+                                <li><Link href="/" className="hover:text-[#C2A65A] transition">Accueil</Link></li>
+                                <li><Link href="/cart" className="hover:text-[#C2A65A] transition">Panier</Link></li>
+                                <li><a href="#FAQ" className="hover:text-[#C2A65A] transition">FAQ</a></li>
+                                <li><a href="#Contact" className="hover:text-[#C2A65A] transition">Contact</a></li>
+                            </ul>
+                        </div>
+
+                        <div className="md:col-span-3 space-y-3">
+                            <h5 className="text-[11px] font-bold uppercase tracking-widest text-[#C2A65A]">Informations Légales</h5>
+                            <ul className="space-y-2 text-xs font-semibold text-white/60">
+                                <li><a href="#CGV" className="hover:text-[#C2A65A] transition">Conditions générales</a></li>
+                                <li><a href="#Retour" className="hover:text-[#C2A65A] transition">Politique de retour</a></li>
+                                <li><a href="#Livraison" className="hover:text-[#C2A65A] transition">Politique de livraison</a></li>
+                            </ul>
+                        </div>
+
+                        <div className="md:col-span-3 space-y-3">
+                            <h5 className="text-[11px] font-bold uppercase tracking-widest text-[#C2A65A]">Besoin d&apos;aide ?</h5>
+                            <p className="text-xs text-white/60 leading-relaxed">
+                                Notre équipe est disponible du lundi au samedi de 9h à 19h pour vous accompagner.
+                            </p>
+                            <div className="pt-1 text-xs font-bold text-white">support@5witm.com</div>
+                        </div>
+                    </div>
+
+                    <div className="mt-12 pt-6 border-t border-[#C2A65A]/15 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-[11px] font-medium text-white/50">
+                        <p>© {new Date().getFullYear()} 5witm. Tous droits réservés.</p>
+                        <div className="flex items-center gap-4">
+                            <a href="#CGV" className="hover:text-[#C2A65A] transition">Mentions légales</a>
+                            <span>•</span>
+                            <a href="#Retour" className="hover:text-[#C2A65A] transition">Confidentialité</a>
                         </div>
                     </div>
                 </div>
