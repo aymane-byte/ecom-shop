@@ -73,9 +73,9 @@ class ProductController extends Controller
             'has_variants' => 'boolean',
             'price'        => 'required_if:has_variants,false|nullable|numeric|min:0',
             'stock'        => 'required_if:has_variants,false|nullable|integer|min:0',
-            'image'        => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:3072',
+            'image'        => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:10240',
             'current_image'=> 'nullable|string',
-            'gallery.*'    => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:3072',
+            'gallery.*'    => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:10240',
 
             // Variant Types
             'variant_types'                  => 'array|required_if:has_variants,true',
@@ -86,7 +86,7 @@ class ProductController extends Controller
             'variant_types.*.values.*.id'    => 'nullable',
             'variant_types.*.values.*.value' => 'required_if:has_variants,true|string|max:255',
             'variant_types.*.values.*.order' => 'nullable|integer',
-            'variant_types.*.values.*.image' => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:3072',
+            'variant_types.*.values.*.image' => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:10240',
             'variant_types.*.values.*.current_image_path' => 'nullable|string',
 
             // Product Variants
@@ -256,9 +256,9 @@ class ProductController extends Controller
             'has_variants' => 'boolean',
             'price'        => 'required_if:has_variants,false|nullable|numeric|min:0',
             'stock'        => 'required_if:has_variants,false|nullable|integer|min:0',
-            'image'        => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:3072',
+            'image'        => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:10240',
             'current_image'=> 'nullable|string',
-            'gallery.*'    => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:3072',
+            'gallery.*'    => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:10240',
 
             // Variant Types
             'variant_types'                  => 'array|required_if:has_variants,true',
@@ -269,7 +269,7 @@ class ProductController extends Controller
             'variant_types.*.values.*.id'    => 'nullable',
             'variant_types.*.values.*.value' => 'required_if:has_variants,true|string|max:255',
             'variant_types.*.values.*.order' => 'nullable|integer',
-            'variant_types.*.values.*.image' => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:3072',
+            'variant_types.*.values.*.image' => 'nullable|file|mimes:jpeg,png,jpg,webp,avif|max:10240',
             'variant_types.*.values.*.current_image_path' => 'nullable|string',
 
             // Product Variants

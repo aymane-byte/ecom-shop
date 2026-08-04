@@ -497,13 +497,13 @@ export default function Show({ product: rawProduct }) {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-start">
                     {/* LEFT IMAGE GALLERY */}
                     <div className="lg:col-span-7 flex flex-col gap-4 lg:gap-5">
-                        <div className="bg-white border border-[#E5E7EB] rounded-2xl sm:rounded-3xl p-3 sm:p-6 lg:p-14 min-h-[40vh] sm:min-h-[50vh] aspect-auto sm:aspect-square flex items-center justify-center shadow-sm relative group overflow-hidden">
+                        <div className="bg-white border border-[#E5E7EB] rounded-2xl sm:rounded-3xl p-3 sm:p-6 lg:p-14 min-h-[50vh] sm:min-h-[60vh] lg:min-h-[70vh] aspect-auto sm:aspect-square flex items-center justify-center shadow-sm relative group overflow-hidden">
                             {activeImage ? (
                                 <img
                                     key={activeImage}
                                     src={activeImage}
                                     alt={product.name}
-                                    className="max-h-[40vh] sm:max-h-[50vh] lg:max-h-full max-w-full object-contain transition-all duration-700 ease-out group-hover:scale-105"
+                                    className="max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] max-w-full object-contain transition-all duration-700 ease-out group-hover:scale-105"
                                 />
                             ) : (
                                 <div className="text-[#6B7280] font-bold text-xs uppercase tracking-widest">{t('product.show.image_not_available')}</div>
