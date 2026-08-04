@@ -210,6 +210,21 @@ export default function Show({ product: rawProduct }) {
         return images.filter(img => img.path);
     }, [product, selectedVariantValues]);
 
+    // Navigation functions for images
+    const handlePreviousImage = () => {
+        if (allImages.length === 0) return;
+        const currentIndex = allImages.findIndex(img => img.path === activeImage);
+        const newIndex = currentIndex > 0 ? currentIndex - 1 : allImages.length - 1;
+        setActiveImage(allImages[newIndex].path);
+    };
+
+    const handleNextImage = () => {
+        if (allImages.length === 0) return;
+        const currentIndex = allImages.findIndex(img => img.path === activeImage);
+        const newIndex = currentIndex < allImages.length - 1 ? currentIndex + 1 : 0;
+        setActiveImage(allImages[newIndex].path);
+    };
+
     const handleAddToCart = () => {
         const dataToSend = { quantity: quantity };
         if (product?.has_variants && selectedProductVariant) {
@@ -492,6 +507,30 @@ export default function Show({ product: rawProduct }) {
                                 />
                             ) : (
                                 <div className="text-[#6B7280] font-bold text-xs uppercase tracking-widest">{t('product.show.image_not_available')}</div>
+                            )}
+
+                            {/* Navigation Buttons */}
+                            {allImages.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={handlePreviousImage}
+                                        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/90 hover:bg-white border border-[#E5E7EB] hover:border-[#C2A65A] rounded-full flex items-center justify-center shadow-lg transition-all duration-200 z-10"
+                                        aria-label="Previous image"
+                                    >
+                                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        onClick={handleNextImage}
+                                        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/90 hover:bg-white border border-[#E5E7EB] hover:border-[#C2A65A] rounded-full flex items-center justify-center shadow-lg transition-all duration-200 z-10"
+                                        aria-label="Next image"
+                                    >
+                                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                        </svg>
+                                    </button>
+                                </>
                             )}
 
                             <div className="absolute top-2 sm:top-5 left-2 sm:left-5 bg-[#C2A65A]/10 backdrop-blur-md px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-full border border-[#C2A65A]/30 flex items-center gap-1.5 sm:gap-2">
