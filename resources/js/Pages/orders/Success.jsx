@@ -65,6 +65,10 @@ export default function Success() {
     const orderNumber = order?.id ? `#${String(order.id).padStart(4, '0')}` : '#0000';
     const totalAmount = order?.total_amount || order?.total || 0;
 
+    const handlePrintReceipt = () => {
+        window.open(`/orders/${order?.id}/invoice`, '_blank');
+    };
+
     // Track Purchase Meta Pixel event when order is successful
     useEffect(() => {
         if (order) {
@@ -394,6 +398,15 @@ export default function Success() {
                                 {t('success.view_orders', 'Mes commandes')}
                             </Link>
                         )}
+                        <button
+                            onClick={handlePrintReceipt}
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#C2A65A] hover:bg-[#0A4338] hover:text-white text-[#0A4338] text-[11px] font-bold uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-md"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+                            {t('success.download_receipt', 'Télécharger reçu')}
+                        </button>
                         <Link
                             href="/"
                             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-[#E5E7EB] hover:border-[#C2A65A] text-[#6B7280] hover:text-[#0F5C4D] text-[11px] font-bold uppercase tracking-wider px-6 py-3 rounded-xl transition"

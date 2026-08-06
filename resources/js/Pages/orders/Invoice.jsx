@@ -43,7 +43,27 @@ export default function Invoice() {
     const invoiceNumber = order.invoice_number || `INV-${String(order.id || 0).padStart(5, '0')}`;
 
     return (
-        <div className="bg-[#F8F7F4] min-h-screen text-[#111111] antialiased font-sans flex flex-col relative overflow-hidden">
+        <>
+            <style>{`
+                @media print {
+                    header, #trust-section, .print-hidden {
+                        display: none !important;
+                    }
+                    body {
+                        background: white !important;
+                        padding: 0 !important;
+                    }
+                    main {
+                        padding: 20px !important;
+                        max-width: 100% !important;
+                    }
+                    .bg-white {
+                        box-shadow: none !important;
+                        border: 1px solid #ddd !important;
+                    }
+                }
+            `}</style>
+            <div className="bg-[#F8F7F4] min-h-screen text-[#111111] antialiased font-sans flex flex-col relative overflow-hidden">
             {/* HEADER & NAVBAR */}
             <header className="sticky top-0 z-40">
                 {/* Announcement Bar */}
@@ -507,5 +527,6 @@ export default function Invoice() {
                 </div>
             </section>
         </div>
+        </>
     );
 }
